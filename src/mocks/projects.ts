@@ -1,0 +1,138 @@
+export const AreaProject1 = [
+  {
+    id: "area1",
+    title: "ToDo",
+    tasks: [
+      {
+        id: "task1",
+        tags: ["frontend", "urgent"],
+        text: "Implement user login functionality",
+        taskOwner: "Alice",
+        createdAt: "2023-10-01",
+      },
+      {
+        id: "task2",
+        tags: ["backend"],
+        text: "Set up database schema",
+        taskOwner: "Bob",
+        createdAt: "2023-10-02",
+      },
+      {
+        id: "task3",
+        tags: ["design"],
+        text: "Create wireframes for the dashboard",
+        taskOwner: "Charlie",
+        createdAt: "2023-10-03",
+      },
+    ],
+  },
+  {
+    id: "area2",
+    title: "Homework",
+    tasks: [
+      {
+        id: "task4",
+        tags: ["frontend", "testing"],
+        text: "Develop user interface for profile page",
+        taskOwner: "David",
+        createdAt: "2023-10-04",
+      },
+      {
+        id: "task5",
+        tags: ["backend", "api"],
+        text: "Implement password reset functionality",
+        taskOwner: "Eve",
+        createdAt: "2023-10-05",
+      },
+    ],
+  },
+  // {
+  //   id: "area3",
+  //   title: "Area 3",
+  //   tasks: [
+  //     {
+  //       id: "task6",
+  //       tags: ["frontend"],
+  //       text: "Develop responsive layout",
+  //       taskOwner: "Frank",
+  //       createdAt: "2023-10-06",
+  //     },
+  //     {
+  //       id: "task7",
+  //       tags: ["backend", "database"],
+  //       text: "Implement API for data retrieval",
+  //       taskOwner: "Grace",
+  //       createdAt: "2023-10-07",
+  //     },
+  //     {
+  //       id: "task8",
+  //       tags: ["testing"],
+  //       text: "Conduct user acceptance testing",
+  //       taskOwner: "Hank",
+  //       createdAt: "2023-10-08",
+  //     },
+  //     {
+  //       id: "task9",
+  //       tags: ["design"],
+  //       text: "Create marketing materials",
+  //       taskOwner: "Ivy",
+  //       createdAt: "2023-10-09",
+  //     },
+  //     {
+  //       id: "task10",
+  //       tags: ["frontend", "backend"],
+  //       text: "Integrate payment gateway",
+  //       taskOwner: "Jack",
+  //       createdAt: "2023-10-10",
+  //     },
+  //   ],
+  // },
+];
+
+export const projects = [
+  {
+    id: "project-1",
+    title: "Implement User Authentication",
+    tags: ["backend", "security"],
+    owner: "Katya",
+    isFavorite: true,
+    createdAt: "2023-06-01",
+    areas: AreaProject1,
+  },
+  {
+    id: "project-2",
+    title: "Create Task Overview Page",
+    tags: ["frontend", "UI"],
+    owner: "Nikita",
+    isFavorite: false,
+    createdAt: "2023-06-15",
+    areas: [],
+  },
+  {
+    id: "project-3",
+    title: "Set Up Database Schema",
+    tags: ["database", "setup"],
+    owner: "Mikhail",
+    isFavorite: true,
+    createdAt: "2023-06-20",
+    areas: [],
+  },
+  {
+    id: "project-4",
+    title: "Develop Notification System",
+    tags: ["features", "notifications"],
+    owner: "Oksana",
+    isFavorite: false,
+    createdAt: "2023-07-02",
+    areas: [],
+  },
+  {
+    id: "project-5",
+    title: "Integrate Third-Party API",
+    tags: ["integration", "API"],
+    owner: "Sergei",
+    isFavorite: true,
+    createdAt: "2023-07-10",
+    areas: [],
+  },
+];

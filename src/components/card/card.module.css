@@ -1,0 +1,13 @@
+.card {
+  border: 1px solid white;
+  padding: 10px;
+  margin: 30px 10px 0px 10px;
+  /* margin-bottom: 10px; */
+  max-width: 300px;
+  min-width: 300px;
+  /* flex: 1 1 200px; */
+}
+
+.card div {
+  padding: 5px;
+}

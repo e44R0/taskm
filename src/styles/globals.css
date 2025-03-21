@@ -3,6 +3,8 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --task: #1c1c1c;
+  --task2: #222222;
 }
 
 @theme inline {
