@@ -15,7 +15,7 @@ export const Area = (props: AreaProps) => {
   };
 
   return (
-    <div className=" m-1 p-2 orbitron-400">
+    <div className="m-1 p-2 orbitron-400">
       <div className="flex flex-auto">
         <h2 className="flex-2">{title}</h2>
         <button className="flex-0" onClick={settingsBtnHandler}>

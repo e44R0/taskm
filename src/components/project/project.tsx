@@ -7,13 +7,22 @@ interface ProjectProps {
   project: TProject;
 }
 export const Project = ({ project }: ProjectProps) => {
-  const styles = { "--columns-number": project.areas.length } as CSSProperties;
+  const areasLength = project?.areas?.length + 1 || 0;
+  // console.log("project --- :", project);
+  const styles = {
+    "--columns-number": areasLength,
+  } as CSSProperties;
 
   return (
-    <div className={classes.projectLayout} style={styles}>
-      {project?.areas?.map((area) => (
-        <Area key={area.id} area={area} />
-      ))}
-    </div>
+    <>
+      <div className={classes.projectLayout} style={styles}>
+        {project?.areas?.map((area) => (
+          <Area key={area.id} area={area} />
+        ))}
+        <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-10 p-2">
+          +
+        </div>
+      </div>
+    </>
   );
 };
