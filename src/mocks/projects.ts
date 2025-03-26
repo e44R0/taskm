@@ -89,7 +89,7 @@ export const AreaProject1 = [
   // },
 ];
 
-export const projects = [
+export const projects2 = [
   {
     id: "project-1",
     title: "Implement User Authentication",
@@ -136,3 +136,11 @@ export const projects = [
     areas: [],
   },
 ];
+
+//     tags: ["integration", "API"],
+//     owner: "Sergei",
+//     isFavorite: true,
+//     createdAt: "2023-07-10",
+//     areas: [],
+//   },
+// ];

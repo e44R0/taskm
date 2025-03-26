@@ -7,7 +7,7 @@ interface ProjectProps {
   project: TProject;
 }
 export const Project = ({ project }: ProjectProps) => {
-  const areasLength = project?.areas?.length + 1 || 0;
+  const areasLength = project?.areas?.length + 1 || 1;
   // console.log("project --- :", project);
   const styles = {
     "--columns-number": areasLength,
