@@ -1,0 +1,73 @@
+import type { NextApiRequest, NextApiResponse } from "next";
+import projects from "@/mocks/projects.json";
+import { Project } from "@/types/project";
+import fs from "fs";
+import path from "path";
+
+export default function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<Project | { message: string }>
+) {
+  if (req.method === "POST") {
+    console.log("Запрошен проект дял добавления карты: ", req.body);
+    const id = req.body.id;
+    const areaId = req.body.area;
+
+    if (typeof id !== "string") {
+      return res
+        .status(400)
+        .json({ message: "Некорректный идентификатор проекта" });
+    }
+
+    const project = projects.find((project) => project.id === id);
+
+    let totalTasks = 0;
+    if (project) {
+      totalTasks = project.areas.reduce((total, area) => {
+        return total + area.tasks.length;
+      }, 0);
+
+      const newTask = {
+        id: `task${totalTasks + 1}`,
+        tags: ["select tag"],
+        text: "Enter ur text here",
+        taskOwner: "Bob",
+        createdAt: new Date().toISOString().split("T")[0],
+      };
+
+      projects.forEach((project) => {
+        if (project.id === id) {
+          project.areas.forEach((area) => {
+            if (area.id === areaId) {
+              area.tasks.push(newTask);
+            }
+          });
+        }
+      });
+
+      const filePath = path.join(
+        process.cwd(),
+        "src",
+        "mocks",
+        "projects.json"
+      );
+      console.log("filePath: ", filePath);
+
+      fs.writeFile(filePath, JSON.stringify(projects, null, 2), (err) => {
+        if (err) {
+          console.error("Ошибка при записи в файл:", err);
+          return res
+            .status(500)
+            .json({ message: "Ошибка при сохранении данных" });
+        }
+      });
+    } else {
+      return res.status(404).json({ message: "Проект не найден" });
+    }
+
+    res.status(200).json({ message: "Таск добавлен в проект" });
+    //   .json(project);
+  } else {
+    res.status(405).json({ message: "Выбран неверный метод" });
+  }
+}

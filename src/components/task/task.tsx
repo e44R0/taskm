@@ -23,7 +23,7 @@ export const Task = (props: TaskProps) => {
     console.log(id);
   };
 
-  const handleSave = async () => {
+  const saveHandler = async () => {
     const text = initialText;
     const tags = initialTags;
 
@@ -55,6 +55,8 @@ export const Task = (props: TaskProps) => {
     }
   };
 
+  const deleteHandler = async () => {};
+
   return (
     <>
       {isEditing ? (
@@ -76,7 +78,8 @@ export const Task = (props: TaskProps) => {
             />
             <div className="flex justify-between mx-2 mt-2">
               <button onClick={clickHandler}>Cancel</button>
-              <button onClick={handleSave}>Save</button>
+              <button onClick={deleteHandler}>Delete</button>
+              <button onClick={saveHandler}>Save</button>
             </div>
           </div>
         </div>
