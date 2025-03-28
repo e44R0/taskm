@@ -1,12 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import projects from "@/mocks/projects.json";
-import { Project } from "@/types/project";
+// import { Project } from "@/types/project";
 import fs from "fs";
 import path from "path";
+import { Task } from "@/types/task";
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Project | { message: string }>
+  res: NextApiResponse<Task | { message: string }>
 ) {
   if (req.method === "POST") {
     console.log("Запрошен проект дял добавления карты: ", req.body);
@@ -20,6 +21,10 @@ export default function handler(
     }
 
     const project = projects.find((project) => project.id === id);
+    // const area = project?.areas.find();
+
+    // const index = area?.tasks.findIndex()
+    // areas.tasks[index] = updatedTask
 
     let totalTasks = 0;
     if (project) {
@@ -60,12 +65,12 @@ export default function handler(
             .status(500)
             .json({ message: "Ошибка при сохранении данных" });
         }
+        res.status(200).json(newTask);
       });
     } else {
       return res.status(404).json({ message: "Проект не найден" });
     }
 
-    res.status(200).json({ message: "Таск добавлен в проект" });
     //   .json(project);
   } else {
     res.status(405).json({ message: "Выбран неверный метод" });

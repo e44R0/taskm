@@ -2,6 +2,7 @@
 import { Task as TTask } from "@/types/task";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { createTask } from "@/api/createTask";
 
 interface TaskProps {
   task: TTask;
@@ -38,21 +39,28 @@ export const Task = (props: TaskProps) => {
       },
     };
 
-    const response = await fetch("/api/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(taskData),
-    });
-
-    if (response.ok) {
-      const savedTask = await response.json();
-      console.log("Задача сохранена:", savedTask);
-      setIsEditing(false);
-    } else {
-      console.error("Ошибка при сохранении задачи");
+    try {
+      // setErrorMessage(null);
+      createTask(taskData);
+    } catch (error) {
+      console.error((error as Error).message);
+      // setErrorMessage((error as Error).message)
     }
+    // const response = await fetch("/api/tasks", {
+    //   method: "POST",
+    //   headers: {
+    //     "Content-Type": "application/json",
+    //   },
+    //   body: JSON.stringify(taskData),
+    // });
+
+    // if (response.ok) {
+    //   const savedTask = await response.json();
+    //   console.log("Задача сохранена:", savedTask);
+    //   setIsEditing(false);
+    // } else {
+    //   console.error("Ошибка при сохранении задачи");
+    // }
   };
 
   const deleteHandler = async () => {};
