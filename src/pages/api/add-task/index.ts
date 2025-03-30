@@ -4,6 +4,7 @@ import projects from "@/mocks/projects.json";
 import fs from "fs";
 import path from "path";
 import { Task } from "@/types/task";
+import {getStoragePath} from "../../../../utils/utils";
 
 export default function handler(
   req: NextApiRequest,
@@ -23,8 +24,8 @@ export default function handler(
     const project = projects.find((project) => project.id === id);
     // const area = project?.areas.find();
 
-    // const index = area?.tasks.findIndex()
-    // areas.tasks[index] = updatedTask
+    // const index = area?.update-task.findIndex()
+    // areas.update-task[index] = updatedTask
 
     let totalTasks = 0;
     if (project) {
@@ -50,12 +51,7 @@ export default function handler(
         }
       });
 
-      const filePath = path.join(
-        process.cwd(),
-        "src",
-        "mocks",
-        "projects.json"
-      );
+      const filePath:string = getStoragePath();
       console.log("filePath: ", filePath);
 
       fs.writeFile(filePath, JSON.stringify(projects, null, 2), (err) => {
@@ -71,8 +67,7 @@ export default function handler(
       return res.status(404).json({ message: "Проект не найден" });
     }
 
-    //   .json(project);
   } else {
-    res.status(405).json({ message: "Выбран неверный метод" });
+    res.status(404).json({ message: "Выбран неверный метод" });
   }
 }

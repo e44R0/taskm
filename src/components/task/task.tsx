@@ -1,8 +1,9 @@
-"use client";
 import { Task as TTask } from "@/types/task";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { createTask } from "@/api/createTask";
+// import { createTask } from "@/api/createTask";
+import {updateTask} from "@/utils/utils";
+import {ParsedUrlQuery} from "node:querystring";
 
 interface TaskProps {
   task: TTask;
@@ -13,27 +14,22 @@ export const Task = (props: TaskProps) => {
   const {
     task: { id, tags, text, taskOwner, createdAt },
   } = props;
-  const projectid = router.query;
+  const projectId:ParsedUrlQuery = router.query;
   const [isEditing, setIsEditing] = useState(false);
   const [initialText, setInitialText] = useState(text);
-  const [initialTags, setInitialTags] = useState(tags);
+  const [initialTags , setInitialTags] = useState(tags);
 
   const clickHandler = () => {
     setIsEditing(!isEditing);
-    console.log(router.query);
-    console.log(id);
   };
 
-  const saveHandler = async () => {
-    const text = initialText;
-    const tags = initialTags;
-
+  const saveHandler = async ():Promise<void> => {
     const taskData = {
-      projectid,
+      projectId,
       task: {
         id,
-        tags,
-        text,
+        tags: initialTags,
+        text: initialText,
         taskOwner,
         createdAt,
       },
@@ -41,26 +37,11 @@ export const Task = (props: TaskProps) => {
 
     try {
       // setErrorMessage(null);
-      createTask(taskData);
+      updateTask(taskData).then(()=>setIsEditing(!isEditing));
     } catch (error) {
-      console.error((error as Error).message);
       // setErrorMessage((error as Error).message)
+      console.error((error as Error).message);
     }
-    // const response = await fetch("/api/tasks", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify(taskData),
-    // });
-
-    // if (response.ok) {
-    //   const savedTask = await response.json();
-    //   console.log("Задача сохранена:", savedTask);
-    //   setIsEditing(false);
-    // } else {
-    //   console.error("Ошибка при сохранении задачи");
-    // }
   };
 
   const deleteHandler = async () => {};
@@ -80,8 +61,8 @@ export const Task = (props: TaskProps) => {
             Tags:
             <input
               type="text"
-              // value={initialTags.join(", ")}
-              value={initialTags}
+              value={initialTags.join(", ")}
+              // value={initialTags}
               onChange={(e) => setInitialTags(e.target.value.split(", "))}
             />
             <div className="flex justify-between mx-2 mt-2">
@@ -95,8 +76,8 @@ export const Task = (props: TaskProps) => {
         <div className="task m-1 mb-3 p-2  bg-[#1c1c1c]" onClick={clickHandler}>
           <div>
             <div className="pb-4">{initialText}</div>
-            {/* <div>Tags: {initialTags.join(", ")}</div> */}
-            <div>Tags: {initialTags}</div>
+             <div>Tags: {initialTags.join(", ")}</div>
+            {/*<div>Tags: {initialTags}</div>*/}
             <div className="flex justify-between">
               <div>{createdAt}</div>
               <div>{taskOwner}</div>

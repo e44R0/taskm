@@ -49,7 +49,7 @@ export const AreaProject1 = [
   // {
   //   id: "area3",
   //   title: "Area 3",
-  //   tasks: [
+  //   update-task: [
   //     {
   //       id: "task6",
   //       tags: ["frontend"],
