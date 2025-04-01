@@ -2,19 +2,22 @@ import { Task as TTask } from "@/types/task";
 import { useRouter } from "next/router";
 import { useState } from "react";
 // import { createTask } from "@/api/createTask";
-import {updateTask} from "@/utils/utils";
+import { updateTask} from "@/api/update-task";
 import {ParsedUrlQuery} from "node:querystring";
+import {deleteTask} from "@/api/delete-task";
 
 interface TaskProps {
+  areaId: string;
   task: TTask;
 }
 
 export const Task = (props: TaskProps) => {
   const router = useRouter();
+  const areaId = props.areaId;
   const {
-    task: { id, tags, text, taskOwner, createdAt },
+    task: { taskId, tags, text, taskOwner, createdAt },
   } = props;
-  const projectId:ParsedUrlQuery = router.query;
+  const projectId = router.query.id;
   const [isEditing, setIsEditing] = useState(false);
   const [initialText, setInitialText] = useState(text);
   const [initialTags , setInitialTags] = useState(tags);
@@ -27,7 +30,7 @@ export const Task = (props: TaskProps) => {
     const taskData = {
       projectId,
       task: {
-        id,
+        taskId,
         tags: initialTags,
         text: initialText,
         taskOwner,
@@ -44,7 +47,16 @@ export const Task = (props: TaskProps) => {
     }
   };
 
-  const deleteHandler = async () => {};
+  const deleteHandler = async () => {
+
+    try {
+      deleteTask(projectId,areaId,taskId)
+    }
+    catch (error) {
+      console.error((error as Error).message);
+    }
+
+  };
 
   return (
     <>
@@ -62,7 +74,6 @@ export const Task = (props: TaskProps) => {
             <input
               type="text"
               value={initialTags.join(", ")}
-              // value={initialTags}
               onChange={(e) => setInitialTags(e.target.value.split(", "))}
             />
             <div className="flex justify-between mx-2 mt-2">
@@ -77,7 +88,6 @@ export const Task = (props: TaskProps) => {
           <div>
             <div className="pb-4">{initialText}</div>
              <div>Tags: {initialTags.join(", ")}</div>
-            {/*<div>Tags: {initialTags}</div>*/}
             <div className="flex justify-between">
               <div>{createdAt}</div>
               <div>{taskOwner}</div>

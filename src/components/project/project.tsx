@@ -8,7 +8,6 @@ interface ProjectProps {
 }
 export const Project = ({ project }: ProjectProps) => {
   const areasLength = project?.areas?.length + 1 || 1;
-  // console.log("project --- :", project);
   const styles = {
     "--columns-number": areasLength,
   } as CSSProperties;
@@ -19,8 +18,8 @@ export const Project = ({ project }: ProjectProps) => {
         {project?.areas?.map((area) => (
           <Area key={area.id} area={area} />
         ))}
-        <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-10 p-2">
-          +
+        <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-11 p-2">
+          <button>+</button>
         </div>
       </div>
     </>

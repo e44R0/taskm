@@ -1,22 +1,21 @@
-import {TaskData} from "@/types/task";
+import path from "path";
+import fs from 'fs';
 
-export const updateTask = async (data:TaskData)=> {
-    const response = await fetch("/api/update-task", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+export const writeToFile = (filePath:string, data: object, callback: (err: Error | null) => void) => {
+    fs.writeFile(filePath, JSON.stringify(data, null, 2), (err) => {
+        if (err) {
+            console.error("Ошибка при записи в файл:", err);
+            return callback(err);
+        }
+        callback(null);
     });
+};
 
-    const result = await response.json();
-    if (response.ok) {
-        console.log("Задача сохранена:", result);
-        return result;
-    } else {
-        // { error: "..." }
-        throw new Error(
-            `API error: ${response.statusText} — ${response.status}: ${result?.message}`
-        );
-    }
+export const getStoragePath = () => {
+    return path.join(
+        process.cwd(),
+        "src",
+        "mocks",
+        "projects.json"
+    );
 }

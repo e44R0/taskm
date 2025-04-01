@@ -1,7 +1,9 @@
-"use client";
 import { Area as TArea } from "@/types/area";
 import { Task } from "../task/task";
 import { useRouter } from "next/router";
+import React from "react";
+import { Task as TTask } from "@/types/task";
+import {createTask} from "@/api/create-task";
 
 interface AreaProps {
   area: TArea;
@@ -12,25 +14,21 @@ export const Area = (props: AreaProps) => {
     area: { id, title, tasks },
   } = props;
   const router = useRouter();
-  const projectid = router.query;
+  const [currentTasks, setCurrentTasks] = React.useState<TTask[]>(tasks);
+  const projectId = router.query.id;
 
   const settingsBtnHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
     console.log(evt.currentTarget, "pressed");
   };
 
-  const addNewTaskHandler = () => {
-    fetch("/api/add-task", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ id: projectid.id, area: id }),
-    }).then(() => {
-      console.log("Запрос о новом таске отправлен на сервер!", {
-        id: projectid.id,
-        area: id,
-      });
-    });
+  const addNewTaskHandler = async () => {
+    const areaData = { projectId: projectId, areaId: id }
+    console.log("addNewTask", router.query);
+    try{
+      createTask(areaData, setCurrentTasks).then(()=>console.log('Новая задача создана'));
+    } catch (error) {
+      console.error("Ошибка при добавлении нового таска:", error);
+    }
   };
 
   return (
@@ -42,16 +40,13 @@ export const Area = (props: AreaProps) => {
         </button>
       </div>
       <ul className="taskList">
-        {tasks.map((task) => (
-          <li key={task.id} className="taskContainer ">
-            <Task task={task} />
+        {currentTasks.map((task) => (
+          <li key={task.taskId} className="taskContainer ">
+            <Task areaId={id} task={task} />
           </li>
         ))}
-        <div
-          className="text-center hover:bg-[#1c1c1c]"
-          onClick={addNewTaskHandler}
-        >
-          +
+        <div className='text-center hover:bg-[#1c1c1c]'>
+          <button className="" onClick={addNewTaskHandler}>+</button>
         </div>
       </ul>
     </div>

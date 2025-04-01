@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import projects from "@/mocks/projects.json";
 import {TaskData} from "@/types/task";
-import {getStoragePath, writeToFile} from "../../../../utils/utils";
+import {getStoragePath, writeToFile} from "@/utils/utils";
 
 export default function handler(
   req: NextApiRequest,
@@ -15,7 +15,7 @@ export default function handler(
     projects.forEach((project) =>
       project.areas.forEach((area) => {
         area.tasks.forEach((task) => {
-          if (task.id === updatedTask.task.id) {
+          if (task.taskId === updatedTask.task.taskId) {
             task.text = updatedTask.task.text;
             task.tags = updatedTask.task.tags || task.tags;
             // task.taskOwner = updatedTask.task.taskOwner;

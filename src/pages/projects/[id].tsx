@@ -1,4 +1,3 @@
-"use client";
 import { useRouter } from "next/router";
 import { Project as TProject } from "@/types/project";
 import { Project } from "@/components/project/project";
@@ -12,7 +11,6 @@ export default function ProjectID() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // console.log("ID ", id);
     if (id) {
       const fetchProject = async () => {
         try {
@@ -24,7 +22,7 @@ export default function ProjectID() {
 
           const data = await response.json();
           setProject(data);
-          // console.log("Полученные данные ", data);
+
         } catch (error) {
           setError((error as Error).message);
           console.error("Ошибка при получении проекта:", error);
