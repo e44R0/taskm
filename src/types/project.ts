@@ -1,11 +1,11 @@
-import { Area } from "./area";
+import { Area } from './area'
 
 export interface Project {
-  id: string;
-  title: string;
-  tags: string[];
-  owner: string;
-  isFavorite: boolean;
-  createdAt: string;
-  areas: Area[];
+  id: string
+  title: string
+  tags: string[]
+  owner: string
+  isFavorite: boolean
+  createdAt: string
+  areas: Area[]
 }
