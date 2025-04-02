@@ -2,7 +2,7 @@ import Database from 'better-sqlite3'
 import { fillDatabaseWithMocks } from '@/db/mocks'
 import path from 'path'
 
-const db = new Database(пшеpath.join(process.cwd(), 'database.sqlite'), {
+const db = new Database(path.join(process.cwd(), 'database.sqlite'), {
   verbose: console.log,
 })
 
