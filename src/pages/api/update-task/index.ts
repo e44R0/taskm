@@ -3,7 +3,7 @@ import projects from "@/mocks/projects.json";
 import {TaskData} from "@/types/task";
 import {getStoragePath, writeToFile} from "@/utils/utils";
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<TaskData | string>
 ) {
@@ -30,16 +30,12 @@ export default function handler(
       return res.status(404).json("Задача не найдена");
     }
 
-    writeToFile(getStoragePath(), projects, (err) => {
-      if (err) {
-        return res.status(500).json("Ошибка при сохранении данных");
-      }
-      console.log(updatedTask)
-      return res.status(200).json(updatedTask);
-      // Почему то все равно ругается на:
-      // API resolved without sending a response for /api/update-task, this may result in stalled requests.
-
-    });
+    try {
+        await writeToFile(getStoragePath(), projects);
+        return res.status(200).json(updatedTask);
+    } catch {
+       return res.status(500).json("Ошибка при сохранении данных");
+    }
   } else {
     return res.status(405).end(`Метод ${req.method} не разрешен`);
   }

@@ -1,5 +1,3 @@
-import {ParsedUrlQuery} from "node:querystring";
-
 export interface Task {
   taskId: string;
   tags: string[];
@@ -9,6 +7,6 @@ export interface Task {
 }
 
 export interface TaskData {
-  projectId: ParsedUrlQuery,
+  projectId: string,
   task: Task,
   }

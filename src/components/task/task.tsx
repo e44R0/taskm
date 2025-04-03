@@ -1,14 +1,13 @@
 import { Task as TTask } from "@/types/task";
 import { useRouter } from "next/router";
 import { useState } from "react";
-// import { createTask } from "@/api/createTask";
 import { updateTask} from "@/api/update-task";
-import {ParsedUrlQuery} from "node:querystring";
 import {deleteTask} from "@/api/delete-task";
 
 interface TaskProps {
   areaId: string;
   task: TTask;
+  onDelete: () => void;
 }
 
 export const Task = (props: TaskProps) => {
@@ -16,8 +15,9 @@ export const Task = (props: TaskProps) => {
   const areaId = props.areaId;
   const {
     task: { taskId, tags, text, taskOwner, createdAt },
+    onDelete,
   } = props;
-  const projectId = router.query.id;
+  const projectId = router.query.id as string;
   const [isEditing, setIsEditing] = useState(false);
   const [initialText, setInitialText] = useState(text);
   const [initialTags , setInitialTags] = useState(tags);
@@ -48,14 +48,12 @@ export const Task = (props: TaskProps) => {
   };
 
   const deleteHandler = async () => {
-
     try {
-      deleteTask(projectId,areaId,taskId)
-    }
-    catch (error) {
+      await deleteTask(projectId,areaId,taskId);
+      onDelete();
+    } catch (error) {
       console.error((error as Error).message);
     }
-
   };
 
   return (

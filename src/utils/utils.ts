@@ -1,13 +1,15 @@
 import path from "path";
 import fs from 'fs';
 
-export const writeToFile = (filePath:string, data: object, callback: (err: Error | null) => void) => {
-    fs.writeFile(filePath, JSON.stringify(data, null, 2), (err) => {
-        if (err) {
-            console.error("Ошибка при записи в файл:", err);
-            return callback(err);
-        }
-        callback(null);
+export const writeToFile = (filePath:string, data: object,) => {
+    return new Promise((resolve, reject)  => {
+        fs.writeFile(filePath, JSON.stringify(data, null, 2), (err) => {
+            if (err) {
+                console.error("Ошибка при записи в файл:", err);
+                return reject(err);
+            }
+            return resolve(null);
+        });
     });
 };
 

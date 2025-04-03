@@ -15,7 +15,7 @@ export const Area = (props: AreaProps) => {
   } = props;
   const router = useRouter();
   const [currentTasks, setCurrentTasks] = React.useState<TTask[]>(tasks);
-  const projectId = router.query.id;
+  const projectId = router.query.id as string;
 
   const settingsBtnHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
     console.log(evt.currentTarget, "pressed");
@@ -31,6 +31,18 @@ export const Area = (props: AreaProps) => {
     }
   };
 
+  const deleteTask = (taskId: string) => {
+    const taskIndex = currentTasks.findIndex(task => task.taskId === taskId);
+    console.log("current:", currentTasks);
+    console.log("taskIndex:", taskIndex, "taskId:", taskId);
+
+
+    if (taskIndex !== -1) {
+      currentTasks.splice(taskIndex, 1);
+      setCurrentTasks([...currentTasks]);
+    }
+  }
+
   return (
     <div className="m-1 p-2 orbitron-400">
       <div className="flex flex-auto">
@@ -42,7 +54,7 @@ export const Area = (props: AreaProps) => {
       <ul className="taskList">
         {currentTasks.map((task) => (
           <li key={task.taskId} className="taskContainer ">
-            <Task areaId={id} task={task} />
+            <Task areaId={id} task={task} onDelete={() => deleteTask(task.taskId)} />
           </li>
         ))}
         <div className='text-center hover:bg-[#1c1c1c]'>
