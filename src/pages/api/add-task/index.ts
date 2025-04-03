@@ -4,7 +4,7 @@ import { Task } from '@/types/task'
 import { getStoragePath, writeToFile } from '@/utils/utils'
 import { randomUUID } from 'crypto'
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Task | { message: string }>
 ) {
@@ -18,12 +18,6 @@ export default function handler(
         .status(400)
         .json({ message: 'Некорректный идентификатор проекта' })
     }
-
-    // const project = projects.find((project) => project.id === id);
-    // const area = project?.areas.find();
-
-    // const index = area?.update-task.findIndex()
-    // areas.update-task[index] = updatedTask
 
     const newTask = {
       taskId: `${randomUUID()}`,
@@ -43,21 +37,12 @@ export default function handler(
       }
     })
 
-    // fs.writeFile(filePath, JSON.stringify(projects, null, 2), (err) => {
-    //   if (err) {
-    //     console.error("Ошибка при записи в файл:", err);
-    //     return res
-    //       .status(500)
-    //       .json({ message: "Ошибка при сохранении данных" });
-    //   }
-    //   res.status(200).json(newTask);
-    // });
-    writeToFile(getStoragePath(), projects, (err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Ошибка при сохранении данных' })
-      }
+    try {
+      await writeToFile(getStoragePath(), projects)
       return res.status(200).json(newTask)
-    })
+    } catch {
+      return res.status(500).json({ message: 'Ошибка при сохранении данных' })
+    }
   } else {
     res.status(404).json({ message: 'Выбран неверный метод' })
   }

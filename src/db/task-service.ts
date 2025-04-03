@@ -1,4 +1,4 @@
-import db from './db'
+import db from './init-db.mjs'
 // import { Task } from '@/types/task'
 import { User } from '@/types/users'
 

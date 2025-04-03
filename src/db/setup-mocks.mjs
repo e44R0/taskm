@@ -1,4 +1,4 @@
-import db from './db'
+import db from './init-db.mjs'
 
 function createUsers() {
   const users = [
@@ -208,3 +208,5 @@ export function fillDatabaseWithMocks() {
   addUserToProjects()
   console.log('Моковые данные успешно добавлены в базу!')
 }
+
+fillDatabaseWithMocks()

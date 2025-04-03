@@ -6,7 +6,9 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "init-bd": "node src/db/init-db.mjs",
+    "setup-mocks": "node src/db/setup-mocks.mjs"
   },
   "dependencies": {
     "better-sqlite3": "^11.9.1",

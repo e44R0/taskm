@@ -18,8 +18,6 @@ export default async function handler(
           if (task.taskId === updatedTask.task.taskId) {
             task.text = updatedTask.task.text
             task.tags = updatedTask.task.tags || task.tags
-            // task.taskOwner = updatedTask.task.taskOwner;
-            // task.createdAt = updatedTask.task.createdAt;
             taskUpdated = true
           }
         })
@@ -31,10 +29,10 @@ export default async function handler(
     }
 
     try {
-        await writeToFile(getStoragePath(), projects);
-        return res.status(200).json(updatedTask);
+      await writeToFile(getStoragePath(), projects)
+      return res.status(200).json(updatedTask)
     } catch {
-       return res.status(500).json("Ошибка при сохранении данных");
+      return res.status(500).json('Ошибка при сохранении данных')
     }
   } else {
     return res.status(405).end(`Метод ${req.method} не разрешен`)

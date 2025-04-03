@@ -1,8 +1,7 @@
 import Database from 'better-sqlite3'
-import { fillDatabaseWithMocks } from '@/db/mocks'
-import path from 'path'
+// import { fillDatabaseWithMocks } from '@/db/mocks'
 
-const db = new Database(path.join(process.cwd(), 'database.sqlite'), {
+const db = new Database('./database.sqlite', {
   verbose: console.log,
 })
 
@@ -45,7 +44,7 @@ db.exec(`
                                                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
         );
 
-  
+
     CREATE TABLE IF NOT EXISTS users (
                                         id TEXT PRIMARY KEY,
                                         username TEXT NOT NULL,
@@ -54,7 +53,7 @@ db.exec(`
                                         created_at TEXT NOT NULL
     );
 
- 
+
     CREATE TABLE IF NOT EXISTS project_users (
                                                 project_id TEXT NOT NULL,
                                                 user_id TEXT NOT NULL,
@@ -66,6 +65,6 @@ db.exec(`
 `)
 
 console.log('База данных и таблицы успешно созданы.')
-fillDatabaseWithMocks()
+// fillDatabaseWithMocks()
 
 export default db

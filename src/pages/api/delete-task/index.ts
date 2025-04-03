@@ -4,7 +4,7 @@ import { Task } from '@/types/task'
 import { getStoragePath, writeToFile } from '@/utils/utils'
 // import { randomUUID } from 'crypto';
 
-export default function handler(
+export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Task | { message: string }>
 ) {
@@ -35,12 +35,12 @@ export default function handler(
       console.log('Область не найдена')
     }
 
-    writeToFile(getStoragePath(), projects, (err) => {
-      if (err) {
-        return res.status(500).json({ message: 'Ошибка при сохранении данных' })
-      }
+    try {
+      await writeToFile(getStoragePath(), projects)
       return res.status(200).json({ message: 'Задача была удалена на сревере' })
-    })
+    } catch {
+      return res.status(500).json({ message: 'Ошибка при сохранении данных' })
+    }
   } else {
     res.status(404).json({ message: 'Выбран неверный метод' })
   }
