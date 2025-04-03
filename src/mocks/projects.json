@@ -1,0 +1,140 @@
+[
+  {
+    "id": "project-1",
+    "title": "Implement User Authentication",
+    "tags": [
+      "backend",
+      "security"
+    ],
+    "owner": "Katya",
+    "isFavorite": true,
+    "createdAt": "2023-06-01",
+    "areas": [
+      {
+        "id": "area1",
+        "title": "ToDo",
+        "tasks": [
+          {
+            "taskId": "task13",
+            "tags": [
+              "select tag"
+            ],
+            "text": "Enter ur text here 3",
+            "taskOwner": "Bob",
+            "createdAt": "2025-03-31"
+          },
+          {
+            "taskId": "b226b2e7-f6b0-453e-bbba-1cfdc3d6a53b",
+            "tags": [
+              "select tag"
+            ],
+            "text": "Enter ur text here",
+            "taskOwner": "Bob",
+            "createdAt": "2025-04-01"
+          },
+          {
+            "taskId": "9b5ac7ba-495d-443f-bee5-d631eb7ebe8c",
+            "tags": [
+              "select tag"
+            ],
+            "text": "Enter ur text here",
+            "taskOwner": "Bob",
+            "createdAt": "2025-04-01"
+          }
+        ]
+      },
+      {
+        "id": "area2",
+        "title": "Homework",
+        "tasks": [
+          {
+            "taskId": "task4",
+            "tags": [
+              "backend",
+              "api"
+            ],
+            "text": "Implement password reset functionality",
+            "taskOwner": "David",
+            "createdAt": "2023-10-04"
+          },
+          {
+            "taskId": "task5",
+            "tags": [
+              "backend",
+              "api"
+            ],
+            "text": "Implement password reset functionality",
+            "taskOwner": "Eve",
+            "createdAt": "2023-10-05"
+          },
+          {
+            "taskId": "ce579a1c-8373-46d7-ab92-c394e0bf06bb",
+            "tags": [
+              "select tag"
+            ],
+            "text": "Enter ur text here",
+            "taskOwner": "Bob",
+            "createdAt": "2025-04-01"
+          },
+          {
+            "taskId": "745ccc86-992a-4ceb-a439-85cba949d7d6",
+            "tags": [
+              "select tag"
+            ],
+            "text": "Enter ur text here",
+            "taskOwner": "Bob",
+            "createdAt": "2025-04-01"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "project-2",
+    "title": "Create Task Overview Page",
+    "tags": [
+      "frontend",
+      "UI"
+    ],
+    "owner": "Nikita",
+    "isFavorite": false,
+    "createdAt": "2023-06-15",
+    "areas": []
+  },
+  {
+    "id": "project-3",
+    "title": "Set Up Database Schema",
+    "tags": [
+      "database",
+      "setup"
+    ],
+    "owner": "Mikhail",
+    "isFavorite": true,
+    "createdAt": "2023-06-20",
+    "areas": []
+  },
+  {
+    "id": "project-4",
+    "title": "Develop Notification System",
+    "tags": [
+      "features",
+      "notifications"
+    ],
+    "owner": "Oksana",
+    "isFavorite": false,
+    "createdAt": "2023-07-02",
+    "areas": []
+  },
+  {
+    "id": "project-5",
+    "title": "Integrate Third-Party API",
+    "tags": [
+      "integration",
+      "API"
+    ],
+    "owner": "Sergei",
+    "isFavorite": true,
+    "createdAt": "2023-07-10",
+    "areas": []
+  }
+]

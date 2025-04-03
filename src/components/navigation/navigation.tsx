@@ -21,10 +21,11 @@ export const Navigation = () => {
     <div className={navOpen ? styles.navigationOpen : styles.navigationClose}>
       <div className={styles.userInfo}>
         <Image
-          src="/favicon.ico"
+          src="/person.png"
           width={navOpen ? "128" : "12"}
           height={navOpen ? "128" : "12"}
           alt="avatar"
+          priority
         />
         <p className="mt-5">User Name</p>
       </div>
