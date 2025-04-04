@@ -1,12 +1,12 @@
-import { Area as TArea } from "@/types/area";
-import { Task } from "../task/task";
-import { useRouter } from "next/router";
-import React from "react";
-import { Task as TTask } from "@/types/task";
-import {createTask} from "@/api/create-task";
+import { Area as TArea } from '@/types/area'
+import { Task } from '../task/task'
+import { useRouter } from 'next/router'
+import React from 'react'
+import { Task as TTask } from '@/types/task'
+import { createTask } from '@/api/create-task'
 
 interface AreaProps {
-  area: TArea;
+  area: TArea
 }
 
 export const Area = (props: AreaProps) => {
@@ -18,18 +18,20 @@ export const Area = (props: AreaProps) => {
   const projectId = router.query.id as string;
 
   const settingsBtnHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(evt.currentTarget, "pressed");
-  };
+    console.log(evt.currentTarget, 'pressed')
+  }
 
   const addNewTaskHandler = async () => {
     const areaData = { projectId: projectId, areaId: id }
-    console.log("addNewTask", router.query);
-    try{
-      createTask(areaData, setCurrentTasks).then(()=>console.log('Новая задача создана'));
+    console.log('addNewTask', router.query)
+    try {
+      createTask(areaData, setCurrentTasks).then(() =>
+        console.log('Новая задача создана')
+      )
     } catch (error) {
-      console.error("Ошибка при добавлении нового таска:", error);
+      console.error('Ошибка при добавлении нового таска:', error)
     }
-  };
+  }
 
   const deleteTask = (taskId: string) => {
     const taskIndex = currentTasks.findIndex(task => task.taskId === taskId);
@@ -57,10 +59,12 @@ export const Area = (props: AreaProps) => {
             <Task areaId={id} task={task} onDelete={() => deleteTask(task.taskId)} />
           </li>
         ))}
-        <div className='text-center hover:bg-[#1c1c1c]'>
-          <button className="" onClick={addNewTaskHandler}>+</button>
+        <div className="text-center hover:bg-[#1c1c1c]">
+          <button className="" onClick={addNewTaskHandler}>
+            +
+          </button>
         </div>
       </ul>
     </div>
-  );
-};
+  )
+}
