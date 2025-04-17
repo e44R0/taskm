@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import projects from '@/mocks/projects.json'
 import { Project } from '@/types/project'
 import { getProjectsWithTags } from '@/db/task-service'
 

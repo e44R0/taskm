@@ -66,37 +66,7 @@ export function getTasksByProjectId(projectId: string) {
   const result = stmt.all(projectId)
   return result as Task[]
 }
-/*
-[
- {
-    id: "area1",
-    title: "ToDo",
-    tasks: [
-      {
-        id: "task1",
-        tags: ["frontend", "urgent"],
-        text: "Implement user login functionality",
-        taskOwner: "Alice",
-        createdAt: "2023-10-01",
-      },
-      {
-        id: "task2",
-        tags: ["backend"],
-        text: "Set up database schema",
-        taskOwner: "Bob",
-        createdAt: "2023-10-02",
-      },
-      {
-        id: "task3",
-        tags: ["design"],
-        text: "Create wireframes for the dashboard",
-        taskOwner: "Charlie",
-        createdAt: "2023-10-03",
-      },
-    ],
-  },
-]
-*/
+
 export function getProjectDataByProjectId(projectId: string) {
   const project = getProjectsById(projectId)
   if (project.id === null) {
@@ -152,8 +122,10 @@ export function getProjectDataByProjectId(projectId: string) {
   return project
 }
 
-export function addNewTask(project_id: string, area_id: string, task: Task) {}
+export function addNewTask(project_id: string, area_id: string, task: Task) {
 const stmt =
-  db.prepare(`INSERT INTO tasks (task., text, task_owner, created_at, project_id, area_id)
+  db.prepare(`INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id)
     VALUES (?, ?, ?, ?, ?, ?)
-`)
+  `)
+stmt.run(task.task_id,task.
+}

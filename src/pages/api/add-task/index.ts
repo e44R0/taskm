@@ -27,16 +27,6 @@ export default async function handler(
       createdAt: new Date().toISOString().split('T')[0],
     }
 
-    // projects.forEach((project) => {
-    //   if (project.id === projectId) {
-    //     project.areas.forEach((area) => {
-    //       if (area.id === areaId) {
-    //         area.tasks.push(newTask)
-    //       }
-    //     })
-    //   }
-    // })
-
     try {
       await writeToFile(getStoragePath(), projects)
       return res.status(200).json(newTask)
