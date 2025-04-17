@@ -14,6 +14,7 @@ export default async function handler(
     const areaId = req.body.areaId
     const taskId = req.body.taskId
     console.log('Удаление таска для карты: ', projectId, areaId, taskId)
+
     if (typeof projectId !== 'string') {
       return res
         .status(400)

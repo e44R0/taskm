@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import projects from '@/mocks/projects.json'
 import { Project } from '@/types/project'
+import { getProjectDataByProjectId } from '@/db/task-service'
 
 export default function handler(
   req: NextApiRequest,
@@ -8,13 +8,15 @@ export default function handler(
 ) {
   const { id } = req.query
   console.log('Запрошен проект: ', id)
+
   if (typeof id !== 'string') {
     return res
       .status(400)
       .json({ message: 'Некорректный идентификатор проекта' })
   }
-  const project = projects.find((project) => project.id === id)
-  // console.log("проект: ", project);
+  const project = getProjectDataByProjectId(id)
+  console.log('project', project)
+
   if (!project) {
     return res.status(404).json({ message: 'Проект не найден' })
   }

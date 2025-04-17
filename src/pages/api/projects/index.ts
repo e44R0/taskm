@@ -1,23 +1,17 @@
-import type { NextApiRequest, NextApiResponse } from "next";
-// import { projects } from "@/mocks/projects.json";
-import projects from "@/mocks/projects.json";
-import { Project } from "@/types/project";
-
-// export default function handler(
-//   req: NextApiRequest,
-//   res: NextApiResponse<Project[]>
-// ) {
-//   res.status(200).json(projects);
-//   console.log('отправлены:', )
-// }
+import type { NextApiRequest, NextApiResponse } from 'next'
+import projects from '@/mocks/projects.json'
+import { Project } from '@/types/project'
+import { getProjectsWithTags } from '@/db/task-service'
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Project[] | { message: string }>
 ) {
-  if (req.method === "GET") {
-    res.status(200).json(projects);
+  if (req.method === 'GET') {
+    const data: Project[] = getProjectsWithTags()
+    console.log(data)
+    res.status(200).json(data)
   } else {
-    res.status(405).json({ message: "Метод не разрешен" });
+    res.status(405).json({ message: 'Метод не разрешен' })
   }
 }
