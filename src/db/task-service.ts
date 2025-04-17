@@ -41,6 +41,8 @@ export function getProjectsById(id: string): Project {
     LEFT JOIN project_tags pt ON p.id = pt.project_id
     WHERE p.id = ?
   `)
+
+  /* eslint-disable @typescript-eslint/no-explicit-any */
   const result = stmt.get(id) as any
   return {
     ...result,
@@ -123,9 +125,34 @@ export function getProjectDataByProjectId(projectId: string) {
 }
 
 export function addNewTask(project_id: string, area_id: string, task: Task) {
-const stmt =
-  db.prepare(`INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id)
+  const stmt =
+    db.prepare(`INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id)
     VALUES (?, ?, ?, ?, ?, ?)
   `)
-stmt.run(task.task_id,task.
+  stmt.run(
+    task.taskId,
+    task.text,
+    task.taskOwner,
+    task.createdAt,
+    project_id,
+    area_id
+  )
+}
+
+// UPDATE employees
+// SET city = 'Toronto',
+// state = 'ON',
+// postalcode = 'M5P 2N7'
+// WHERE
+// employeeid = 4;
+
+export function updateTask(task: Task) {
+  const stmt = db.prepare(`UPDATE tasks 
+      SET
+        text = ?,
+        task_owner = ?
+      WHERE 
+        task_id = ?
+  `)
+  stmt.run(task.text, task.taskOwner, task.taskId)
 }

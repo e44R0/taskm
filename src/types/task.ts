@@ -5,8 +5,3 @@ export interface Task {
   taskOwner: string
   createdAt: string
 }
-
-export interface TaskData {
-  projectId: string,
-  task: Task,
-  }

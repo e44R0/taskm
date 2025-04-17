@@ -1,8 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import projects from '@/mocks/projects.json'
 import { Task } from '@/types/task'
-import { getStoragePath, writeToFile } from '@/utils/utils'
 import { randomUUID } from 'crypto'
+import { addNewTask } from '@/db/task-service'
 
 export default async function handler(
   req: NextApiRequest,
@@ -21,14 +20,14 @@ export default async function handler(
 
     const newTask = {
       taskId: `${randomUUID()}`,
-      tags: ['select tag'],
-      text: 'Enter ur text here',
+      tags: [],
+      text: '',
       taskOwner: 'Bob',
       createdAt: new Date().toISOString().split('T')[0],
     }
 
     try {
-      await writeToFile(getStoragePath(), projects)
+      addNewTask(projectId, areaId, newTask)
       return res.status(200).json(newTask)
     } catch {
       return res.status(500).json({ message: 'Ошибка при сохранении данных' })
