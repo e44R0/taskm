@@ -2,7 +2,7 @@ import Database from 'better-sqlite3'
 // import { fillDatabaseWithMocks } from '@/db/mocks'
 
 const db = new Database('./database.sqlite', {
-  verbose: console.log,
+  // verbose: console.log,
 })
 
 db.exec(`

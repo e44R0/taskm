@@ -1,8 +1,7 @@
-import { Task as TTask } from "@/types/task";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { updateTask} from "@/api/update-task";
-import {deleteTask} from "@/api/delete-task";
+import { Task as TTask } from '@/types/task';
+import { useState } from 'react';
+import { updateTask } from '@/api/update-task';
+import { deleteTask } from '@/api/delete-task';
 
 interface TaskProps {
   areaId: string;
@@ -11,50 +10,44 @@ interface TaskProps {
 }
 
 export const Task = (props: TaskProps) => {
-  const router = useRouter()
-  const areaId = props.areaId
   const {
     task: { taskId, tags, text, taskOwner, createdAt },
     onDelete,
   } = props;
-  const projectId = router.query.id as string;
   const [isEditing, setIsEditing] = useState(false);
   const [initialText, setInitialText] = useState(text);
-  const [initialTags , setInitialTags] = useState(tags);
+  const [initialTags, setInitialTags] = useState(tags);
 
   const clickHandler = () => {
-    setIsEditing(!isEditing)
-  }
+    setIsEditing(!isEditing);
+  };
 
   const saveHandler = async (): Promise<void> => {
     const taskData = {
-      projectId,
-      task: {
-        taskId,
-        tags: initialTags,
-        text: initialText,
-        taskOwner,
-        createdAt,
-      },
-    }
+      taskId,
+      tags: initialTags,
+      text: initialText,
+      taskOwner,
+      createdAt,
+    };
 
     try {
       // setErrorMessage(null);
-      updateTask(taskData).then(() => setIsEditing(!isEditing))
+      updateTask(taskData).then(() => setIsEditing(!isEditing));
     } catch (error) {
       // setErrorMessage((error as Error).message)
-      console.error((error as Error).message)
+      console.error((error as Error).message);
     }
-  }
+  };
 
   const deleteHandler = async () => {
     try {
-      await deleteTask(projectId, areaId, taskId);
+      await deleteTask(taskId);
       onDelete();
     } catch (error) {
-      console.error((error as Error).message)
+      console.error((error as Error).message);
     }
-  }
+  };
 
   return (
     <>
@@ -94,5 +87,5 @@ export const Task = (props: TaskProps) => {
         </div>
       )}
     </>
-  )
-}
+  );
+};

@@ -1,6 +1,6 @@
-import { TaskData } from '@/types/task'
+import { Task } from '@/types/task'
 
-export const updateTask = async (data: TaskData) => {
+export const updateTask = async (data: Task) => {
   const response = await fetch('/api/update-task', {
     method: 'POST',
     headers: {

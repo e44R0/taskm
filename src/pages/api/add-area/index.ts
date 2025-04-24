@@ -1,16 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Task } from '@/types/task';
 import { randomUUID } from 'crypto';
-import { addNewTask } from '@/db/task-service';
+import { addNewArea } from '@/db/task-service';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Task | { message: string }>
+  res: NextApiResponse<{ id: string; title: string } | { message: string }>
 ) {
   if (req.method === 'POST') {
-    console.log('Запрошен проект дял добавления задачи: ', req.body);
     const projectId = req.body.projectId;
-    const areaId = req.body.areaId;
 
     if (typeof projectId !== 'string') {
       return res
@@ -18,17 +15,15 @@ export default async function handler(
         .json({ message: 'Некорректный идентификатор проекта' });
     }
 
-    const newTask = {
-      taskId: `${randomUUID()}`,
-      tags: [],
-      text: '',
-      taskOwner: 'Bob',
-      createdAt: new Date().toISOString().split('T')[0],
+    const newArea = {
+      id: `${randomUUID()}`,
+      title: `New area`,
+      tasks: [],
     };
 
     try {
-      addNewTask(projectId, areaId, newTask);
-      return res.status(200).json(newTask);
+      addNewArea(projectId, newArea);
+      return res.status(200).json(newArea);
     } catch {
       return res.status(500).json({ message: 'Ошибка при сохранении данных' });
     }
