@@ -1,12 +1,12 @@
-import { Area as TArea } from '@/types/area'
-import { Task } from '../task/task'
-import { useRouter } from 'next/router'
-import React from 'react'
-import { Task as TTask } from '@/types/task'
-import { createTask } from '@/api/create-task'
+import { Area as TArea } from '@/types/area';
+import { Task } from '../task/task';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { Task as TTask } from '@/types/task';
+import { createTask } from '@/api/create-task';
 
 interface AreaProps {
-  area: TArea
+  area: TArea;
 }
 
 export const Area = (props: AreaProps) => {
@@ -18,33 +18,32 @@ export const Area = (props: AreaProps) => {
   const projectId = router.query.id as string;
 
   const settingsBtnHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {
-    console.log(evt.currentTarget, 'pressed')
-  }
+    console.log(evt.currentTarget, 'pressed');
+  };
 
   const addNewTaskHandler = async () => {
-    const areaData = { projectId: projectId, areaId: id }
-    console.log('addNewTask', router.query)
+    const areaData = { projectId: projectId, areaId: id };
+    console.log('addNewTask', router.query);
     try {
       createTask(areaData, setCurrentTasks).then(() =>
         console.log('Новая задача создана')
-      )
+      );
     } catch (error) {
-      console.error('Ошибка при добавлении нового таска:', error)
+      console.error('Ошибка при добавлении нового таска:', error);
     }
-  }
+  };
 
-  const deleteTask = (taskId: string) => {
-    const taskIndex = currentTasks.findIndex(task => task.taskId === taskId);
-    console.log("current:", currentTasks);
-    console.log("taskIndex:", taskIndex, "taskId:", taskId);
-
+  const deleteTaskHandler = (taskId: string) => {
+    const taskIndex = currentTasks.findIndex((task) => task.taskId === taskId);
+    console.log('current:', currentTasks);
+    console.log('taskIndex:', taskIndex, 'taskId:', taskId);
 
     if (taskIndex !== -1) {
       currentTasks.splice(taskIndex, 1);
       setCurrentTasks([...currentTasks]);
     }
-  }
-
+  };
+  console.log('current:', currentTasks);
   return (
     <div className="m-1 p-2 orbitron-400">
       <div className="flex flex-auto">
@@ -54,11 +53,16 @@ export const Area = (props: AreaProps) => {
         </button>
       </div>
       <ul className="taskList">
-        {currentTasks.map((task) => (
-          <li key={task.taskId} className="taskContainer ">
-            <Task areaId={id} task={task} onDelete={() => deleteTask(task.taskId)} />
-          </li>
-        ))}
+        {currentTasks.length > 0 &&
+          currentTasks.map((task) => (
+            <li key={task.taskId} className="taskContainer ">
+              <Task
+                areaId={id}
+                task={task}
+                onDelete={() => deleteTaskHandler(task.taskId)}
+              />
+            </li>
+          ))}
         <div className="text-center hover:bg-[#1c1c1c]">
           <button className="" onClick={addNewTaskHandler}>
             +
@@ -66,5 +70,5 @@ export const Area = (props: AreaProps) => {
         </div>
       </ul>
     </div>
-  )
-}
+  );
+};
