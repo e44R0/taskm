@@ -1,20 +1,21 @@
-import { Card } from '@/components/card/card'
-import style from './project-list.module.css'
-import { useEffect, useState } from 'react'
-import { Project } from '@/types/project'
+import { Card } from '@/components/card/card';
+import style from './project-list.module.css';
+import { useEffect, useState } from 'react';
+import { Project } from '@/types/project';
+import { fetcher } from '@/api/fetcher';
+import { useRouter } from 'next/router';
 
 export const ProjectList = () => {
-  const [projects, setProjects] = useState<Project[]>([])
+  const [projects, setProjects] = useState<Project[]>([]);
+  const router = useRouter();
 
   useEffect(() => {
-    fetch('/api/projects')
-      .then((response) => {
-        response.json().then((data) => {
-          setProjects(data)
-        })
+    fetcher({ method: 'GET', src: '/api/projects', router })
+      .then((data) => {
+        setProjects(data);
       })
-      .catch((error) => console.error(error))
-  }, [])
+      .catch((error) => console.error(error));
+  }, [router]);
 
   return (
     <div className={style.projectList}>
@@ -22,5 +23,5 @@ export const ProjectList = () => {
         <Card key={project.id} project={project} />
       ))}
     </div>
-  )
-}
+  );
+};
