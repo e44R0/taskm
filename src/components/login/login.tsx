@@ -7,13 +7,10 @@ export default function LoginForm() {
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const router = useRouter();
-  console.log('router:', router);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (username && password) {
-      console.log('Username:', username);
-      console.log('Password:', password);
       setError('');
       login({ login: username, password: password })
         .then(() => {

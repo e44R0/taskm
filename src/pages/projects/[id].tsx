@@ -3,6 +3,7 @@ import { Project as TProject } from '@/types/project';
 import { Project } from '@/components/project/project';
 import { useEffect, useState } from 'react';
 import { Area } from '@/types/area';
+import { fetchProject } from '@/api/get-projects';
 
 export default function ProjectID() {
   const router = useRouter();
@@ -33,29 +34,22 @@ export default function ProjectID() {
     });
   };
 
+  // projects/[id]?x=1&y=2
+  // foo/bar?x=1&x=2
+
   useEffect(() => {
     if (id) {
-      const fetchProject = async () => {
-        try {
-          const response = await fetch(`/api/project/${id}`);
-
-          if (!response.ok) {
-            throw new Error(`Ошибка: ${response.status}`);
-          }
-
-          const data = await response.json();
-          setProject(data);
-        } catch (error) {
-          setError((error as Error).message);
-          console.error('Ошибка при получении проекта:', error);
-        } finally {
+      fetchProject(id as string, router)
+        .then((data) => {
           setLoading(false);
-        }
-      };
-
-      fetchProject();
+          setProject(data);
+        })
+        .catch((error) => {
+          setLoading(false);
+          setError(error.toString());
+        });
     }
-  }, [id]);
+  }, [id, router]);
 
   if (loading) {
     return <div>Загрузка...</div>;

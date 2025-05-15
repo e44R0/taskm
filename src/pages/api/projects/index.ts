@@ -1,27 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Project } from '@/types/project';
 import { getProjectsWithTags } from '@/db/task-service';
-import cookie from 'cookie';
-
-const authCheck = (req: NextApiRequest, res: NextApiResponse) => {
-  const parsedCookie = cookie.parse(req.headers.cookie ?? '');
-
-  console.log('cookie:', parsedCookie);
-  if (!parsedCookie || !parsedCookie?.session) {
-    res.status(401).send({ message: 'Not authorized' });
-    return false;
-  }
-
-  console.log('session:', parsedCookie?.session);
-
-  const { login, password } = JSON.parse(parsedCookie?.session ?? '');
-  if (login !== 'user' || password !== 'qwerty') {
-    res.status(401).send({ message: 'Not authorized' });
-    return false;
-  }
-
-  return true;
-};
+import { authCheck } from '@/utils/utils';
 
 export default function handler(
   req: NextApiRequest,

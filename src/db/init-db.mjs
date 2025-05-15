@@ -1,9 +1,9 @@
-import Database from 'better-sqlite3'
+import Database from 'better-sqlite3';
 // import { fillDatabaseWithMocks } from '@/db/mocks'
 
 const db = new Database('./database.sqlite', {
   // verbose: console.log,
-})
+});
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS projects (
@@ -62,9 +62,17 @@ db.exec(`
                                                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
                                                 PRIMARY KEY (project_id, user_id)
         );
-`)
 
-console.log('База данных и таблицы успешно созданы.')
+    CREATE TABLE IF NOT EXISTS user_sessions (
+                                                 id TEXT PRIMARY KEY,
+                                                 user_id TEXT NOT NULL,
+                                                 session_uuid TEXT NOT NULL,
+                                                 created_at TEXT NOT NULL,
+                                                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+`);
+
+console.log('База данных и таблицы успешно созданы.');
 // fillDatabaseWithMocks()
 
-export default db
+export default db;
