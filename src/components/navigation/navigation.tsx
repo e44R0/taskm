@@ -1,7 +1,9 @@
-import Image from "next/image";
-import Link from "next/link";
-import styles from "./navigation.module.css";
-import { useState } from "react";
+import Image from 'next/image';
+import Link from 'next/link';
+import styles from './navigation.module.css';
+import { useState } from 'react';
+import { logout } from '@/api/logout';
+import router from 'next/router';
 
 const variants = {
   expanded: {
@@ -15,15 +17,26 @@ const variants = {
 
 export const Navigation = () => {
   const [navOpen, setNavOpen] = useState(true);
-  const variant = variants[navOpen ? "expanded" : "collapsed"];
+  const variant = variants[navOpen ? 'expanded' : 'collapsed'];
+
+  const handleLogout = async () => {
+    logout()
+      .then(() => {
+        console.log('Вы успешно разлогинились');
+        router.push('/login');
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
   return (
     <div className={navOpen ? styles.navigationOpen : styles.navigationClose}>
       <div className={styles.userInfo}>
         <Image
           src="/person.png"
-          width={navOpen ? "128" : "12"}
-          height={navOpen ? "128" : "12"}
+          width={navOpen ? '128' : '12'}
+          height={navOpen ? '128' : '12'}
           alt="avatar"
           priority
         />
@@ -38,7 +51,7 @@ export const Navigation = () => {
             <Link href="/Settings">Settings</Link>
           </li>
           <li>
-            <Link href="/LogOut">Log Out</Link>
+            <button onClick={handleLogout}>Log Out</button>
           </li>
         </ul>
       </div>

@@ -1,7 +1,6 @@
-import { ProjectList } from '@/components/project-list/project-list';
 import { Geist, Geist_Mono } from 'next/font/google';
 import styles from './index.module.css';
-import { Navigation } from '@/components/navigation/navigation';
+import LoginForm from '@/components/login/login';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -13,12 +12,11 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export default function Home() {
+export default function Login() {
   return (
     <div className={`${geistSans.variable} ${geistMono.variable}`}>
-      <main className={styles.mainPage}>
-        <Navigation />
-        <ProjectList />
+      <main className={styles.LoginPage}>
+        <LoginForm />
       </main>
       <footer className=""></footer>
     </div>
