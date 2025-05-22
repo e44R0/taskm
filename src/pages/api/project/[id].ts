@@ -7,9 +7,11 @@ export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Project | { message: string }>
 ) {
-  if (!authCheck(req, res)) {
+  const result = authCheck(req, res);
+  if (result === null) {
     return;
   }
+  // result.userId;
 
   const { id } = req.query;
   console.log('Запрошен проект: ', id);
