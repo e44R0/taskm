@@ -1,4 +1,4 @@
-import { getSession } from '@/db/auth-service';
+import { deleteSession, getSession } from '@/db/auth-service';
 import cookie from 'cookie';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -11,23 +11,20 @@ const isSessionExpired = (date: Date) => {
 export const authCheck = (req: NextApiRequest, res: NextApiResponse) => {
   const parsedCookie = cookie.parse(req.headers.cookie ?? '');
 
-  console.log('cookie:', parsedCookie);
   if (!parsedCookie || !parsedCookie?.session) {
     res.status(401).send({ message: 'Not authorized' });
-    return false;
+    return null;
   }
-
-  console.log('session from cookie:', parsedCookie?.session);
 
   const session = getSession(parsedCookie?.session);
-  console.log('session:', session);
-  console.log('isSessionExpired: ', Date.now(), Number(session.createdAt));
 
-  //const { login, password } = JSON.parse(parsedCookie?.session ?? '');
   if (!session || isSessionExpired(session.createdAt)) {
+    if (session) {
+      deleteSession(session.id);
+    }
     res.status(401).send({ message: 'Not authorized' });
-    return false;
+    return null;
   }
 
-  return true;
+  return { userId: session.userId };
 };
