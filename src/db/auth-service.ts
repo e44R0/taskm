@@ -24,3 +24,8 @@ export function getSession(id: string): Session {
     createdAt: new Date(session['created_at']),
   };
 }
+
+export function deleteSession(id: string) {
+  const stmt = db.prepare(`DELETE FROM user_sessions WHERE id = ?`);
+  stmt.run(id);
+}

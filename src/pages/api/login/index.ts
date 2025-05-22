@@ -2,7 +2,6 @@ import { createSession, getUserByName } from '@/db/auth-service';
 import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
-// import { encrypt } from '@/app/lib/session'
 
 // type SessionData = {
 //   login: string;

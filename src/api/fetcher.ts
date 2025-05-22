@@ -31,6 +31,6 @@ export const fetcher = async ({
     return response.json();
   } catch (error) {
     console.error('Ошибка:', error);
-    throw error;
+    return Promise.reject(error);
   }
 };
