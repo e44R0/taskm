@@ -6,7 +6,6 @@ import { randomUUID } from 'crypto';
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const sessionData = req.body;
 
-  console.log('Ответ от БД: ', getUserByName(sessionData.login));
   const userData = getUserByName(sessionData.login);
   if (userData && userData.password === sessionData.password) {
     const sessionId = randomUUID();

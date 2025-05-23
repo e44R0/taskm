@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login } from '@/api/login';
 import { useRouter } from 'next/router';
+import Link from 'next/link';
 
 export default function LoginForm() {
   const [username, setUsername] = useState<string>('');
@@ -14,7 +15,6 @@ export default function LoginForm() {
       setError('');
       login({ login: username, password: password })
         .then(() => {
-          console.log('Success');
           router.push('/');
         })
         .catch((err) => {
@@ -26,9 +26,9 @@ export default function LoginForm() {
   };
 
   return (
-    <div className={'flex items-center justify-center h-screen w-full'}>
+    <div className="flex items-center justify-center h-screen w-full flex-col">
       <form
-        className={'flex  flex-col p-6 rounded-lg shadow-lg'}
+        className="flex flex-col p-6 rounded-lg shadow-lg w-full max-w-xs"
         onSubmit={handleSubmit}
       >
         <div className="mb-4">
@@ -61,11 +61,19 @@ export default function LoginForm() {
         {error && <p className="text-red-500">{error}</p>}
         <button
           type="submit"
-          className="mt-4 bg-[#1c1c1c] text-white p-2 rounded"
+          className="mt-4 bg-[#1c1c1c] text-white p-2 rounded w-full hover:bg-[#2a2a2a] transition-colors"
         >
-          Enter
+          Sign In
         </button>
       </form>
+      <div className="w-full max-w-xs px-6">
+        <Link
+          href="/register"
+          className=" bg-[#1c1c1c] text-white p-2 rounded w-full inline-block text-center hover:bg-[#2a2a2a] transition-colors"
+        >
+          Sign Up
+        </Link>
+      </div>
     </div>
   );
 }
