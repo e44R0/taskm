@@ -12,7 +12,7 @@ export const login = async (loginData: { login: string; password: string }) => {
       throw new Error(`Ошибка: ${response.status}`);
     }
   } catch (error) {
-    console.error('Ошибка при создании задачи:', error);
-    throw error; // Можно выбросить ошибку дальше, если нужно
+    console.error('Ошибка при авторизации:', error);
+    throw error;
   }
 };

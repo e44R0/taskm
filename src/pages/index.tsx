@@ -14,6 +14,10 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
+  // const authState = useContext(AuthContext);
+
+  // authState === "unauth" return null;
+
   return (
     <div className={`${geistSans.variable} ${geistMono.variable}`}>
       <main className={styles.mainPage}>

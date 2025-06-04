@@ -2,11 +2,13 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { PasswordToggleIcon } from '@/components/PasswordToggleIcon';
+import { register } from '@/api/register';
 
 export default function RegisterForm() {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const router = useRouter();
@@ -14,19 +16,24 @@ export default function RegisterForm() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!username || !password || !confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
-
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError('Пароли не совпадают');
       return;
     }
 
-    // Логика регистрации
-    // console.log('Регистрация:', { username, password });
-    router.push('/login');
+    if (username && password && email) {
+      setError('');
+      register({ login: username, password: password, email: email })
+        .then(() => {
+          router.push('/login');
+        })
+        .catch((err) => {
+          console.log('Error:', err);
+          setError(err.message);
+        });
+    } else {
+      setError('Пожалуйста, заполните все поля');
+    }
   };
 
   const togglePasswordVisibility = () => {
@@ -84,6 +91,19 @@ export default function RegisterForm() {
             id="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            className="mt-1 p-2 w-full rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-white">
+            Email:
+          </label>
+          <input
+            type="text"
+            id="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="mt-1 p-2 w-full rounded"
           />
