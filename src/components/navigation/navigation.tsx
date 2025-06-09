@@ -3,6 +3,8 @@ import Link from 'next/link';
 import styles from './navigation.module.css';
 import { useState } from 'react';
 import { logout } from '@/api/logout';
+import { useContext } from 'react';
+import { AuthContext } from '@/components/auth-context/auth-context';
 import router from 'next/router';
 
 const variants = {
@@ -18,11 +20,13 @@ const variants = {
 export const Navigation = () => {
   const [navOpen, setNavOpen] = useState(true);
   const variant = variants[navOpen ? 'expanded' : 'collapsed'];
+  const auth = useContext(AuthContext);
 
   const handleLogout = async () => {
     logout()
       .then(() => {
         console.log('Вы успешно разлогинились');
+        auth.setStatus('unauthorized');
         router.push('/login');
       })
       .catch((err) => {

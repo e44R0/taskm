@@ -8,11 +8,12 @@ export default function handler(
   res: NextApiResponse<Project[] | { message: string }>
 ) {
   if (req.method === 'GET') {
-    if (!authCheck(req, res)) {
+    const auth = authCheck(req, res);
+    if (!auth) {
       return;
     }
 
-    const data: Project[] = getProjectsWithTags();
+    const data: Project[] = getProjectsWithTags(auth.userId);
 
     res.status(200).json(data);
   } else {

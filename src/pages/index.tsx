@@ -2,6 +2,9 @@ import { ProjectList } from '@/components/project-list/project-list';
 import { Geist, Geist_Mono } from 'next/font/google';
 import styles from './index.module.css';
 import { Navigation } from '@/components/navigation/navigation';
+import { useContext } from 'react';
+import { AuthContext } from '@/components/auth-context/auth-context';
+import { useRouter } from 'next/router';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -14,9 +17,13 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
-  // const authState = useContext(AuthContext);
+  const auth = useContext(AuthContext);
+  const router = useRouter();
 
-  // authState === "unauth" return null;
+  if (auth.status == 'unauthorized') {
+    router.replace('/login');
+    return null;
+  }
 
   return (
     <div className={`${geistSans.variable} ${geistMono.variable}`}>

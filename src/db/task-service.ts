@@ -17,17 +17,18 @@ export function getUserById(userId: string) {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
 }
 
-export function getProjectsWithTags(): Project[] {
+export function getProjectsWithTags(user_id): Project[] {
   const stmt = db.prepare(`
-    SELECT p.id, p.title, p.owner,
+    SELECT p.id, p.title, p.user_id,
            GROUP_CONCAT(pt.tag, ', ') AS tags,
            p.is_favorite,
            p.created_at as createdAt
     FROM projects p
     LEFT JOIN project_tags pt ON p.id = pt.project_id
+    WHERE p.user_id = ?
     GROUP BY p.id
   `);
-  const result = stmt.all();
+  const result = stmt.all(user_id);
   return result as Project[];
 }
 
@@ -106,15 +107,17 @@ export function getProjectDataByProjectId(projectId: string) {
       areasMap.set(record.area_id, {
         id: record.area_id,
         title: record.area_title,
-        tasks: record.task_id ? [
-          {
-            taskId: record.task_id,
-            text: record.text,
-            tags: record.tags?.split(', ') ?? [],
-            taskOwner: record.task_owner,
-            createdAt: record.created_at,
-          },
-        ] : [],
+        tasks: record.task_id
+          ? [
+              {
+                taskId: record.task_id,
+                text: record.text,
+                tags: record.tags?.split(', ') ?? [],
+                taskOwner: record.task_owner,
+                createdAt: record.created_at,
+              },
+            ]
+          : [],
       });
     }
   });

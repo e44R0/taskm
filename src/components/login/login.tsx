@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { login } from '@/api/login';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { AuthContext } from '../auth-context/auth-context';
 
 export default function LoginForm() {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
   const router = useRouter();
+  const auth = useContext(AuthContext);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,7 +17,8 @@ export default function LoginForm() {
       setError('');
       login({ login: username, password: password })
         .then(() => {
-          router.push('/');
+          auth.setStatus('authorized');
+          router.replace('/');
         })
         .catch((err) => {
           console.log('Error:', err);
@@ -24,6 +27,11 @@ export default function LoginForm() {
       setError('Пожалуйста, заполните все поля');
     }
   };
+
+  if (auth.status === 'authorized') {
+    router.replace('/');
+    return null;
+  }
 
   return (
     <div className="flex items-center justify-center h-screen w-full flex-col">
