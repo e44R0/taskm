@@ -1,4 +1,4 @@
-import { createSession, getUserByName } from '@/db/auth-service';
+import { createSession, getUserByEmail } from '@/db/auth-service';
 import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
@@ -6,7 +6,7 @@ import { randomUUID } from 'crypto';
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const sessionData = req.body;
 
-  const userData = getUserByName(sessionData.login);
+  const userData = getUserByEmail(sessionData.login);
   if (userData && userData.password === sessionData.password) {
     const sessionId = randomUUID();
 

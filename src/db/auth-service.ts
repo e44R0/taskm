@@ -2,9 +2,9 @@ import { User } from '@/types/users';
 import db from './init-db.mjs';
 import { Session } from '@/types/session';
 
-export function getUserByName(name: string) {
-  return db.prepare('SELECT * FROM users WHERE username = ?').get(name) as User;
-}
+//export function getUserByName(name: string) {
+//  return db.prepare('SELECT * FROM users WHERE username = ?').get(name) as User;
+// }
 
 export function getUserByEmail(email: string) {
   return db.prepare('SELECT * FROM users WHERE email = ?').get(email) as User;

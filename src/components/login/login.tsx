@@ -20,8 +20,8 @@ export default function LoginForm() {
           auth.setStatus('authorized');
           router.replace('/');
         })
-        .catch((err) => {
-          console.log('Error:', err);
+        .catch(() => {
+          setError('Неверный логин или пароль');
         });
     } else {
       setError('Пожалуйста, заполните все поля');

@@ -22,9 +22,11 @@ export function getProjectsWithTags(user_id): Project[] {
     SELECT p.id, p.title, p.user_id,
            GROUP_CONCAT(pt.tag, ', ') AS tags,
            p.is_favorite,
-           p.created_at as createdAt
+           p.created_at as createdAt,
+           u.username
     FROM projects p
     LEFT JOIN project_tags pt ON p.id = pt.project_id
+    LEFT JOIN users u ON u.id = p.user_id
     WHERE p.user_id = ?
     GROUP BY p.id
   `);
@@ -32,19 +34,22 @@ export function getProjectsWithTags(user_id): Project[] {
   return result as Project[];
 }
 
-export function getProjectsById(id: string): Project {
+export function getProjectsById(id: string, userId: string): Project {
   const stmt = db.prepare(`
-    SELECT p.id, p.title, p.owner,
+    SELECT p.id, p.title, p.user_id,
            GROUP_CONCAT(pt.tag, ', ') AS tags,
            p.is_favorite,
-           p.created_at as createdAt
+           p.created_at as createdAt,
+           u.username
     FROM projects p
     LEFT JOIN project_tags pt ON p.id = pt.project_id
-    WHERE p.id = ?
+    LEFT JOIN users u ON u.id = p.user_id
+    WHERE p.id = ? and p.user_id = ?
   `);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const result = stmt.get(id) as any;
+  const result = stmt.get(id, userId) as any;
+  console.log('result:', result);
   return {
     ...result,
     tags: result?.tags?.split(', ') ?? [],
@@ -70,8 +75,8 @@ export function getTasksByProjectId(projectId: string) {
   return result as Task[];
 }
 
-export function getProjectDataByProjectId(projectId: string) {
-  const project = getProjectsById(projectId);
+export function getProjectDataByProjectId(projectId: string, userId: string) {
+  const project = getProjectsById(projectId, userId);
   if (project.id === null) {
     return null;
   }
@@ -81,7 +86,7 @@ export function getProjectDataByProjectId(projectId: string) {
           a.title as area_title,
           t.task_id,
           t.text,
-          t.task_owner,
+          t.task_owner, 
           t.created_at,
           GROUP_CONCAT(tt.tag, ', ') as tags
       FROM areas a
