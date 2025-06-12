@@ -21,7 +21,7 @@ export default function handler(
       .status(400)
       .json({ message: 'Некорректный идентификатор проекта' });
   }
-  const project = getProjectDataByProjectId(id);
+  const project = getProjectDataByProjectId(id, result.userId);
   console.log('project', project);
 
   if (!project) {

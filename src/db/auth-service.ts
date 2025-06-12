@@ -2,8 +2,12 @@ import { User } from '@/types/users';
 import db from './init-db.mjs';
 import { Session } from '@/types/session';
 
-export function getUserByName(name: string) {
-  return db.prepare('SELECT * FROM users WHERE username = ?').get(name) as User;
+//export function getUserByName(name: string) {
+//  return db.prepare('SELECT * FROM users WHERE username = ?').get(name) as User;
+// }
+
+export function getUserByEmail(email: string) {
+  return db.prepare('SELECT * FROM users WHERE email = ?').get(email) as User;
 }
 
 export function createSession(usedId: string, uuid: string) {
@@ -28,4 +32,17 @@ export function getSession(id: string): Session {
 export function deleteSession(id: string) {
   const stmt = db.prepare(`DELETE FROM user_sessions WHERE id = ?`);
   stmt.run(id);
+}
+
+export function createUser(
+  usedId: string,
+  username: string,
+  password: string,
+  email: string
+) {
+  const stmt =
+    db.prepare(`INSERT INTO users (id, username, email, password, created_at)
+    VALUES (?, ?, ?, ?, datetime('now', 'localtime'))
+  `);
+  stmt.run(usedId, username, email, password);
 }

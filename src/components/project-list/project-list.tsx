@@ -8,7 +8,7 @@ import { useRouter } from 'next/router';
 export const ProjectList = () => {
   const [projects, setProjects] = useState<Project[]>([]);
   const router = useRouter();
-
+  console.log('projects page');
   useEffect(() => {
     fetcher({ method: 'GET', src: '/api/projects', router })
       .then((data) => {

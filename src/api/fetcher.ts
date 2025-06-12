@@ -25,7 +25,8 @@ export const fetcher = async ({
         router.push('/login');
       }
 
-      throw new Error(`Ошибка: ${response.status}`);
+      console.log('Error:', Error);
+      return Promise.reject(new Error(`Ошибка: ${response.status}`));
     }
 
     return response.json();

@@ -9,10 +9,10 @@ export const login = async (loginData: { login: string; password: string }) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Ошибка: ${response.status}`);
+      return Promise.reject(new Error(`Ошибка: ${response.status}`));
     }
   } catch (error) {
-    console.error('Ошибка при создании задачи:', error);
-    throw error; // Можно выбросить ошибку дальше, если нужно
+    console.error('Ошибка при авторизации:', error);
+    return Promise.reject(error);
   }
 };

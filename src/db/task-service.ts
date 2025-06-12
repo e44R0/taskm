@@ -17,33 +17,39 @@ export function getUserById(userId: string) {
   return db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
 }
 
-export function getProjectsWithTags(): Project[] {
+export function getProjectsWithTags(user_id): Project[] {
   const stmt = db.prepare(`
-    SELECT p.id, p.title, p.owner,
+    SELECT p.id, p.title, p.user_id,
            GROUP_CONCAT(pt.tag, ', ') AS tags,
            p.is_favorite,
-           p.created_at as createdAt
+           p.created_at as createdAt,
+           u.username
     FROM projects p
     LEFT JOIN project_tags pt ON p.id = pt.project_id
+    LEFT JOIN users u ON u.id = p.user_id
+    WHERE p.user_id = ?
     GROUP BY p.id
   `);
-  const result = stmt.all();
+  const result = stmt.all(user_id);
   return result as Project[];
 }
 
-export function getProjectsById(id: string): Project {
+export function getProjectsById(id: string, userId: string): Project {
   const stmt = db.prepare(`
-    SELECT p.id, p.title, p.owner,
+    SELECT p.id, p.title, p.user_id,
            GROUP_CONCAT(pt.tag, ', ') AS tags,
            p.is_favorite,
-           p.created_at as createdAt
+           p.created_at as createdAt,
+           u.username
     FROM projects p
     LEFT JOIN project_tags pt ON p.id = pt.project_id
-    WHERE p.id = ?
+    LEFT JOIN users u ON u.id = p.user_id
+    WHERE p.id = ? and p.user_id = ?
   `);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const result = stmt.get(id) as any;
+  const result = stmt.get(id, userId) as any;
+  console.log('result:', result);
   return {
     ...result,
     tags: result?.tags?.split(', ') ?? [],
@@ -69,8 +75,8 @@ export function getTasksByProjectId(projectId: string) {
   return result as Task[];
 }
 
-export function getProjectDataByProjectId(projectId: string) {
-  const project = getProjectsById(projectId);
+export function getProjectDataByProjectId(projectId: string, userId: string) {
+  const project = getProjectsById(projectId, userId);
   if (project.id === null) {
     return null;
   }
@@ -80,7 +86,7 @@ export function getProjectDataByProjectId(projectId: string) {
           a.title as area_title,
           t.task_id,
           t.text,
-          t.task_owner,
+          t.task_owner, 
           t.created_at,
           GROUP_CONCAT(tt.tag, ', ') as tags
       FROM areas a
@@ -106,15 +112,17 @@ export function getProjectDataByProjectId(projectId: string) {
       areasMap.set(record.area_id, {
         id: record.area_id,
         title: record.area_title,
-        tasks: record.task_id ? [
-          {
-            taskId: record.task_id,
-            text: record.text,
-            tags: record.tags?.split(', ') ?? [],
-            taskOwner: record.task_owner,
-            createdAt: record.created_at,
-          },
-        ] : [],
+        tasks: record.task_id
+          ? [
+              {
+                taskId: record.task_id,
+                text: record.text,
+                tags: record.tags?.split(', ') ?? [],
+                taskOwner: record.task_owner,
+                createdAt: record.created_at,
+              },
+            ]
+          : [],
       });
     }
   });
