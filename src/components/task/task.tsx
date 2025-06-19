@@ -2,6 +2,7 @@ import { Task as TTask } from '@/types/task';
 import { useState } from 'react';
 import { updateTask } from '@/api/update-task';
 import { deleteTask } from '@/api/delete-task';
+import { formatDate } from '../utils';
 
 interface TaskProps {
   areaId: string;
@@ -80,7 +81,7 @@ export const Task = (props: TaskProps) => {
             <div className="pb-4">{initialText}</div>
             <div>Tags: {initialTags.join(', ')}</div>
             <div className="flex justify-between">
-              <div>{createdAt}</div>
+              <div>{formatDate(createdAt)}</div>
               <div>{taskOwner}</div>
             </div>
           </div>

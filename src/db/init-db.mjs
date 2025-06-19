@@ -1,6 +1,13 @@
 import Database from 'better-sqlite3';
+import { resolve } from 'path';
+import dotenv from 'dotenv';
 
-const db = new Database('./database.sqlite', {
+dotenv.config();
+
+const dbPath = resolve(process.env.DB_PATH);
+console.log(dbPath);
+
+const db = new Database(dbPath, {
   // verbose: console.log,
 });
 
@@ -64,7 +71,6 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS user_sessions (
                                                  id TEXT PRIMARY KEY,
                                                  user_id TEXT NOT NULL,
-                                                 session_uuid TEXT NOT NULL,
                                                  created_at TEXT NOT NULL,
                                                  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
