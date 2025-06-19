@@ -178,3 +178,16 @@ export function addNewArea(
                            VALUES (?, ?, ?) `);
   stmt.run(area.title, projectId, area.id);
 }
+
+export function addNewProject(data: Project) {
+  const stmt =
+    db.prepare(`INSERT INTO projects (id, title, user_id, is_favorite, created_at)
+                           VALUES (?, ?, ?, ?, datetime('now', 'localtime')) `);
+  stmt.run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
+}
+
+// id TEXT PRIMARY KEY,
+// title TEXT NOT NULL,
+// user_id TEXT NOT NULL,
+// is_favorite BOOLEAN DEFAULT 0,
+// created_at TEXT NOT NULL,

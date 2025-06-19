@@ -19,13 +19,23 @@ export function createSession(usedId: string, uuid: string) {
 
 export function getSession(id: string): Session {
   const session = db
-    .prepare('SELECT * FROM user_sessions WHERE id = ?')
-    .get(id) as { id: string; user_id: string; created_at: string };
+    .prepare(
+      `SELECT us.id, us.user_id, us.created_at, u.username FROM user_sessions us 
+      LEFT JOIN users u ON us.user_id = u.id 
+      WHERE us.id = ?`
+    )
+    .get(id) as {
+    id: string;
+    user_id: string;
+    created_at: string;
+    username: string;
+  };
 
   return {
     id: session.id,
     userId: session['user_id'],
     createdAt: new Date(session['created_at']),
+    username: session.username,
   };
 }
 
