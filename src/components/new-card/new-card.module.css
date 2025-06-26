@@ -1,4 +1,4 @@
-.card {
+.newCard {
   border: 1px solid #2a2a2a;
   padding: 10px;
   margin: 30px 10px 0px 10px;
@@ -8,6 +8,6 @@
   /* flex: 1 1 200px; */
 }
 
-.card div {
+.newCard div {
   padding: 5px;
 }

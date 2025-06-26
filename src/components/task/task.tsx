@@ -78,8 +78,8 @@ export const Task = (props: TaskProps) => {
       ) : (
         <div className="task m-1 mb-3 p-2  bg-[#1c1c1c]" onClick={clickHandler}>
           <div>
-            <div className="pb-4">{initialText}</div>
-            <div>Tags: {initialTags.join(', ')}</div>
+            <div className="pb-2">{initialText}</div>
+            <div className="pb-2">Tags: {initialTags.join(', ')}</div>
             <div className="flex justify-between">
               <div>{formatDate(createdAt)}</div>
               <div>{taskOwner}</div>

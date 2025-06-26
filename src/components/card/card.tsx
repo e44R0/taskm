@@ -21,6 +21,14 @@ export const Card = (props: CardProps) => {
       <div>Owner: {username}</div>
       <div>Favorite: {isFavorite ? 'true' : 'false'}</div>
       <div>{formatDate(createdAt)}</div>
+      <div className="flex justify-between">
+        <button className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]">
+          Edit
+        </button>
+        <button className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]">
+          Delete
+        </button>
+      </div>
     </Link>
   );
 };
