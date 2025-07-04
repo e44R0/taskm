@@ -28,37 +28,41 @@ export const NewCard = (props: NewCardProps) => {
   };
 
   return (
-    <div className={styles.newCard}>
-      <div>
-        <label htmlFor="title">Title:</label>
-        <input
-          name="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        ></input>
+      <div className={`${styles.newCard} flex flex-col`}>
+          <div>
+              <label htmlFor="title">Title:</label>
+              <input
+                  name="title"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full border border-[#1c1c1c] rounded p-1"
+              />
+          </div>
+          <div className="mt-2">
+              <label htmlFor="tags">Tags:</label>
+              <input
+                  name="tags"
+                  value={tags.join(',')}
+                  onChange={(e) => setTags(e.target.value.split(','))}
+                  className="w-full border border-[#1c1c1c] rounded p-1"
+              />
+          </div>
+
+          {/* Кнопки прижаты к низу благодаря mt-auto */}
+          <div className="mt-auto flex justify-between">
+              <button
+                  className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a] rounded"
+                  onClick={cancelNewProjectHandler}
+              >
+                  Cancel
+              </button>
+              <button
+                  className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a] rounded"
+                  onClick={createNewProjectHandler}
+              >
+                  Create
+              </button>
+          </div>
       </div>
-      <div>
-        <label htmlFor="tags">Tags:</label>
-        <input
-          name="tags"
-          value={tags.join(',')}
-          onChange={(e) => setTags(e.target.value.split(','))}
-        ></input>
-      </div>
-      <div className="flex justify-between">
-        <button
-          className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
-          onClick={cancelNewProjectHandler}
-        >
-          Cancel
-        </button>
-        <button
-          className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
-          onClick={createNewProjectHandler}
-        >
-          Create
-        </button>
-      </div>
-    </div>
   );
 };

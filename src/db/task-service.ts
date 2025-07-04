@@ -186,6 +186,23 @@ export function addNewProject(data: Project) {
   stmt.run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
 }
 
+
+export function deleteProject(projectId: string) {
+  const stmt = db.prepare(`DELETE FROM projects WHERE id = ?`);
+  stmt.run(projectId);
+}
+
+export function updateProject(data) {
+    const stmt = db.prepare(`UPDATE projects
+      SET
+        title = ?,
+        is_favorite = ?
+      WHERE
+        id = ?
+  `);
+    stmt.run(data.title, data.tags, data.id);
+}
+
 // id TEXT PRIMARY KEY,
 // title TEXT NOT NULL,
 // user_id TEXT NOT NULL,

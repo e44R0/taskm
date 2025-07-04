@@ -24,10 +24,19 @@ export const ProjectList = () => {
     setIsCreationMode(true);
   };
 
+  const deleteProjectHandler = (projectId: string) => {
+    const projectIndex = projects.findIndex((project) => project.id === projectId);
+
+    if (projectIndex !== -1) {
+      projects.splice(projectIndex, 1);
+      setProjects([...projects]);
+    }
+  };
+
   return (
     <div className={style.projectList}>
       {projects.map((project) => (
-        <Card key={project.id} project={project} />
+        <Card key={project.id} project={project} onDelete={() => deleteProjectHandler(project.id)}/>
       ))}
       {isCreationMode && (
         <NewCard

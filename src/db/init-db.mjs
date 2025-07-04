@@ -1,11 +1,10 @@
 import Database from 'better-sqlite3';
 import { resolve } from 'path';
-import dotenv from 'dotenv';
+// import dotenv from 'dotenv';
+import 'dotenv/config';
 
-dotenv.config();
-
+// dotenv.config();
 const dbPath = resolve(process.env.DB_PATH);
-console.log(dbPath);
 
 const db = new Database(dbPath, {
   // verbose: console.log,

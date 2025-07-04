@@ -124,7 +124,7 @@ export default function RegisterForm() {
           href="/login"
           className="bg-[#1c1c1c] text-white p-2 rounded w-full inline-block text-center hover:bg-[#2a2a2a] transition-colors"
         >
-          Already have an account?
+          Already have an accaunt?
         </Link>
       </div>
     </div>

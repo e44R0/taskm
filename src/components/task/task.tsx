@@ -19,7 +19,7 @@ export const Task = (props: TaskProps) => {
   const [initialText, setInitialText] = useState(text);
   const [initialTags, setInitialTags] = useState(tags);
 
-  const clickHandler = () => {
+  const cancelHandler = () => {
     setIsEditing(!isEditing);
   };
 
@@ -69,14 +69,14 @@ export const Task = (props: TaskProps) => {
               onChange={(e) => setInitialTags(e.target.value.split(', '))}
             />
             <div className="flex justify-between mx-2 mt-2">
-              <button onClick={clickHandler}>Cancel</button>
+              <button onClick={cancelHandler}>Cancel</button>
               <button onClick={deleteHandler}>Delete</button>
               <button onClick={saveHandler}>Save</button>
             </div>
           </div>
         </div>
       ) : (
-        <div className="task m-1 mb-3 p-2  bg-[#1c1c1c]" onClick={clickHandler}>
+        <div className="task m-1 mb-3 p-2  bg-[#1c1c1c]" onClick={cancelHandler}>
           <div>
             <div className="pb-2">{initialText}</div>
             <div className="pb-2">Tags: {initialTags.join(', ')}</div>
