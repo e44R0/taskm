@@ -23,7 +23,7 @@ export const Area = (props: AreaProps) => {
 
   const addNewTaskHandler = async () => {
     const areaData = { projectId: projectId, areaId: id };
-    console.log('addNewTask', router.query);
+
     try {
       createTask(areaData, setCurrentTasks).then(() =>
         console.log('Новая задача создана')
@@ -35,15 +35,13 @@ export const Area = (props: AreaProps) => {
 
   const deleteTaskHandler = (taskId: string) => {
     const taskIndex = currentTasks.findIndex((task) => task.taskId === taskId);
-    console.log('current:', currentTasks);
-    console.log('taskIndex:', taskIndex, 'taskId:', taskId);
 
     if (taskIndex !== -1) {
       currentTasks.splice(taskIndex, 1);
       setCurrentTasks([...currentTasks]);
     }
   };
-  console.log('current:', currentTasks);
+
   return (
     <div className="m-1 p-2 orbitron-400">
       <div className="flex flex-auto">

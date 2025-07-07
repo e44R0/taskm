@@ -20,7 +20,7 @@ export function getUserById(userId: string) {
 export function getProjectsWithTags(user_id): Project[] {
   const stmt = db.prepare(`
     SELECT p.id, p.title, p.user_id,
-           GROUP_CONCAT(pt.tag, ', ') AS tags,
+           GROUP_CONCAT(pt.tag, ',') AS tags,
            p.is_favorite,
            p.created_at as createdAt,
            u.username
@@ -31,7 +31,12 @@ export function getProjectsWithTags(user_id): Project[] {
     GROUP BY p.id
   `);
   const result = stmt.all(user_id);
-  return result as Project[];
+  console.log('result:', result);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return result.map((project: any) => {
+    return { ...project, tags: project?.tags?.split(',') ?? [] };
+  }) as Project[];
 }
 
 export function getProjectsById(id: string, userId: string): Project {
@@ -178,3 +183,52 @@ export function addNewArea(
                            VALUES (?, ?, ?) `);
   stmt.run(area.title, projectId, area.id);
 }
+
+// export function addNewProject(data: Project) {
+//   const stmt =
+//     db.prepare(`INSERT INTO projects (id, title, user_id, is_favorite, created_at)
+//                            VALUES (?, ?, ?, ?, datetime('now', 'localtime'));
+
+//                             `);
+//   stmt.run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
+// }
+
+export function addNewProject(data: Project) {
+  db.transaction(() => {
+    db.prepare(
+      `INSERT INTO projects (id, title, user_id, is_favorite, created_at)
+       VALUES (?, ?, ?, ?, datetime('now', 'localtime'))`
+    ).run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
+
+    if (data.tags?.length) {
+      const placeholders = data.tags.map(() => '(?, ?)').join(',');
+      const flatValues = data.tags.flatMap((tagId) => [data.id, tagId]);
+
+      db.prepare(
+        `INSERT INTO project_tags (project_id, tag) VALUES ${placeholders}`
+      ).run(...flatValues);
+    }
+  })();
+}
+
+export function deleteProject(projectId: string) {
+  const stmt = db.prepare(`DELETE FROM projects WHERE id = ?`);
+  stmt.run(projectId);
+}
+
+export function updateProject(data) {
+  const stmt = db.prepare(`UPDATE projects
+      SET
+        title = ?,
+        is_favorite = ?
+      WHERE
+        id = ?
+  `);
+  stmt.run(data.title, data.tags, data.id);
+}
+
+// id TEXT PRIMARY KEY,
+// title TEXT NOT NULL,
+// user_id TEXT NOT NULL,
+// is_favorite BOOLEAN DEFAULT 0,
+// created_at TEXT NOT NULL,

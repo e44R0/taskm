@@ -10,6 +10,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (userData && userData.password === sessionData.password) {
     const sessionId = randomUUID();
 
+    console.log('user id, session id: ', userData.id, sessionId);
     createSession(userData.id, sessionId);
     const cookie = serialize('session', sessionId, {
       httpOnly: true,

@@ -1,212 +1,285 @@
-import db from './init-db.mjs'
+import Database from 'better-sqlite3';
+import { resolve } from 'path';
+import dotenv from 'dotenv';
 
-function createUsers() {
-  const users = [
-    {
-      id: '1',
-      username: 'alice',
-      email: 'alice@example.com',
-      password: 'password',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      username: 'bob',
-      email: 'bob@example.com',
-      password: 'password',
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      username: 'charlie',
-      email: 'charlie@example.com',
-      password: 'password',
-      createdAt: new Date().toISOString(),
-    },
-  ]
+dotenv.config();
 
-  users.forEach((user) => {
-    const stmt = db.prepare(`
-      INSERT INTO users (id, username, email, password, created_at)
-      VALUES (?, ?, ?, ?, ?)
-    `)
-    stmt.run(user.id, user.username, user.email, user.password, user.createdAt)
-  })
+const dbPath = resolve(process.env.DB_PATH);
+const db = new Database(dbPath);
+
+// function generateId(prefix) {
+//   return `${prefix}_${Math.random().toString(36).substr(2, 5)}`;
+// }
+
+function getRandomDate() {
+  const start = new Date(2023, 0, 1);
+  const end = new Date();
+  return new Date(
+    start.getTime() + Math.random() * (end.getTime() - start.getTime())
+  ).toISOString();
 }
 
-function createProjects() {
-  const projects = [
-    {
-      id: '1',
-      title: 'Project Alpha',
-      owner: 'alice',
-      isFavorite: true,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      title: 'Project Beta',
-      owner: 'bob',
-      isFavorite: false,
-      createdAt: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      title: 'Project Gamma',
-      owner: 'charlie',
-      isFavorite: true,
-      createdAt: new Date().toISOString(),
-    },
-  ]
+db.exec(`
+  DELETE FROM user_sessions;
+  DELETE FROM project_users;
+  DELETE FROM project_tags;
+  DELETE FROM task_tags;
+  DELETE FROM tasks;
+  DELETE FROM areas;
+  DELETE FROM projects;
+  DELETE FROM users;
+`);
 
-  projects.forEach((project) => {
-    const stmt = db.prepare(`
-      INSERT INTO projects (id, title, owner, is_favorite, created_at)
-      VALUES (?, ?, ?, ?, ?)
-    `)
-    stmt.run(
-      project.id,
-      project.title,
-      project.owner,
-      project.isFavorite ? 1 : 0,
-      project.createdAt
-    )
-  })
-}
+// Insert mock users
+const users = [
+  {
+    id: 'user_1',
+    username: 'john_doe',
+    email: 'john@example.com',
+    password: '123',
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'user_2',
+    username: 'jane_smith',
+    email: 'jane@example.com',
+    password: '123',
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'user_3',
+    username: 'mike_johnson',
+    email: 'mike@example.com',
+    password: '123',
+    created_at: getRandomDate(),
+  },
+];
 
-// Функция для создания областей (Areas) внутри проектов
-function createAreas() {
-  const areas = [
-    { id: '1', title: 'To Do', projectId: '1' },
-    { id: '2', title: 'In Progress', projectId: '1' },
-    { id: '3', title: 'Completed', projectId: '1' },
+const insertUser = db.prepare(
+  'INSERT INTO users (id, username, email, password, created_at) VALUES (?, ?, ?, ?, ?)'
+);
+users.forEach((user) =>
+  insertUser.run(
+    user.id,
+    user.username,
+    user.email,
+    user.password,
+    user.created_at
+  )
+);
 
-    { id: '4', title: 'Backlog', projectId: '2' },
-    { id: '5', title: 'To Do', projectId: '2' },
+// Insert mock projects
+const projects = [
+  {
+    id: 'project_1',
+    title: 'Company Website',
+    user_id: 'user_1',
+    is_favorite: 1,
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'project_2',
+    title: 'Mobile App',
+    user_id: 'user_2',
+    is_favorite: 0,
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'project_3',
+    title: 'Internal Dashboard',
+    user_id: 'user_1',
+    is_favorite: 1,
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'project_4',
+    title: 'Marketing Campaign',
+    user_id: 'user_3',
+    is_favorite: 0,
+    created_at: getRandomDate(),
+  },
+];
 
-    { id: '6', title: 'Ideas', projectId: '3' },
-    { id: '7', title: 'To Do', projectId: '3' },
-  ]
+const insertProject = db.prepare(
+  'INSERT INTO projects (id, title, user_id, is_favorite, created_at) VALUES (?, ?, ?, ?, ?)'
+);
+projects.forEach((project) =>
+  insertProject.run(
+    project.id,
+    project.title,
+    project.user_id,
+    project.is_favorite,
+    project.created_at
+  )
+);
 
-  areas.forEach((area) => {
-    const stmt = db.prepare(`
-      INSERT INTO areas (id, title, project_id)
-      VALUES (?, ?, ?)
-    `)
-    stmt.run(area.id, area.title, area.projectId)
-  })
-}
+// Insert project members
+const projectUsers = [
+  { project_id: 'project_1', user_id: 'user_1', role: 'owner' },
+  { project_id: 'project_1', user_id: 'user_2', role: 'member' },
+  { project_id: 'project_2', user_id: 'user_2', role: 'owner' },
+  { project_id: 'project_2', user_id: 'user_3', role: 'member' },
+  { project_id: 'project_3', user_id: 'user_1', role: 'owner' },
+  { project_id: 'project_3', user_id: 'user_3', role: 'admin' },
+  { project_id: 'project_4', user_id: 'user_3', role: 'owner' },
+];
 
-// Функция для создания задач (Tasks) в этих областях
-function createTasks() {
-  const tasks = [
-    {
-      taskId: '1',
-      text: 'Finish setting up project structure',
-      taskOwner: 'alice',
-      createdAt: new Date().toISOString(),
-      projectId: '1',
-      areaId: '1',
-    },
-    {
-      taskId: '2',
-      text: 'Implement authentication',
-      taskOwner: 'bob',
-      createdAt: new Date().toISOString(),
-      projectId: '1',
-      areaId: '2',
-    },
-    {
-      taskId: '3',
-      text: 'Write unit tests',
-      taskOwner: 'charlie',
-      createdAt: new Date().toISOString(),
-      projectId: '1',
-      areaId: '3',
-    },
+const insertProjectUser = db.prepare(
+  'INSERT INTO project_users (project_id, user_id, role) VALUES (?, ?, ?)'
+);
+projectUsers.forEach((pu) =>
+  insertProjectUser.run(pu.project_id, pu.user_id, pu.role)
+);
 
-    {
-      taskId: '4',
-      text: 'Create wireframes',
-      taskOwner: 'bob',
-      createdAt: new Date().toISOString(),
-      projectId: '2',
-      areaId: '4',
-    },
-    {
-      taskId: '5',
-      text: 'Define project scope',
-      taskOwner: 'alice',
-      createdAt: new Date().toISOString(),
-      projectId: '2',
-      areaId: '5',
-    },
+// Insert project tags
+const projectTags = [
+  { project_id: 'project_1', tag: 'web' },
+  { project_id: 'project_1', tag: 'design' },
+  { project_id: 'project_2', tag: 'mobile' },
+  { project_id: 'project_2', tag: 'development' },
+  { project_id: 'project_3', tag: 'internal' },
+  { project_id: 'project_4', tag: 'marketing' },
+];
 
-    {
-      taskId: '6',
-      text: 'Brainstorm features',
-      taskOwner: 'charlie',
-      createdAt: new Date().toISOString(),
-      projectId: '3',
-      areaId: '6',
-    },
-    {
-      taskId: '7',
-      text: 'Create project timeline',
-      taskOwner: 'bob',
-      createdAt: new Date().toISOString(),
-      projectId: '3',
-      areaId: '7',
-    },
-  ]
+const insertProjectTag = db.prepare(
+  'INSERT INTO project_tags (project_id, tag) VALUES (?, ?)'
+);
+projectTags.forEach((pt) => insertProjectTag.run(pt.project_id, pt.tag));
 
-  tasks.forEach((task) => {
-    const stmt = db.prepare(`
-      INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `)
-    stmt.run(
-      task.taskId,
-      task.text,
-      task.taskOwner,
-      task.createdAt,
-      task.projectId,
-      task.areaId
-    )
-  })
-}
+// Insert project areas
+const areas = [
+  { id: 'area_1', title: 'Frontend', project_id: 'project_1' },
+  { id: 'area_2', title: 'Backend', project_id: 'project_1' },
+  { id: 'area_3', title: 'Design', project_id: 'project_1' },
+  { id: 'area_4', title: 'iOS', project_id: 'project_2' },
+  { id: 'area_5', title: 'Android', project_id: 'project_2' },
+  { id: 'area_6', title: 'API', project_id: 'project_3' },
+  { id: 'area_7', title: 'Database', project_id: 'project_3' },
+  { id: 'area_8', title: 'Content', project_id: 'project_4' },
+];
 
-// Функция для создания связей пользователей с проектами
-function addUserToProjects() {
-  const projectUsers = [
-    { projectId: '1', userId: '1', role: 'owner' },
-    { projectId: '1', userId: '2', role: 'member' },
-    { projectId: '1', userId: '3', role: 'member' },
+const insertArea = db.prepare(
+  'INSERT INTO areas (id, title, project_id) VALUES (?, ?, ?)'
+);
+areas.forEach((area) => insertArea.run(area.id, area.title, area.project_id));
 
-    { projectId: '2', userId: '2', role: 'owner' },
-    { projectId: '2', userId: '1', role: 'member' },
+// Insert tasks
+const tasks = [
+  {
+    task_id: 'task_1',
+    text: 'Create homepage layout',
+    task_owner: 'user_1',
+    created_at: getRandomDate(),
+    project_id: 'project_1',
+    area_id: 'area_1',
+  },
+  {
+    task_id: 'task_2',
+    text: 'Implement auth API',
+    task_owner: 'user_2',
+    created_at: getRandomDate(),
+    project_id: 'project_1',
+    area_id: 'area_2',
+  },
+  {
+    task_id: 'task_3',
+    text: 'Design logo',
+    task_owner: 'user_3',
+    created_at: getRandomDate(),
+    project_id: 'project_1',
+    area_id: 'area_3',
+  },
+  {
+    task_id: 'task_4',
+    text: 'Develop login screen',
+    task_owner: 'user_2',
+    created_at: getRandomDate(),
+    project_id: 'project_2',
+    area_id: 'area_4',
+  },
+  {
+    task_id: 'task_5',
+    text: 'Integrate payments',
+    task_owner: 'user_3',
+    created_at: getRandomDate(),
+    project_id: 'project_2',
+    area_id: 'area_5',
+  },
+  {
+    task_id: 'task_6',
+    text: 'Optimize DB queries',
+    task_owner: 'user_1',
+    created_at: getRandomDate(),
+    project_id: 'project_3',
+    area_id: 'area_7',
+  },
+  {
+    task_id: 'task_7',
+    text: 'Create content plan',
+    task_owner: 'user_3',
+    created_at: getRandomDate(),
+    project_id: 'project_4',
+    area_id: 'area_8',
+  },
+];
 
-    { projectId: '3', userId: '3', role: 'owner' },
-    { projectId: '3', userId: '1', role: 'member' },
-  ]
+const insertTask = db.prepare(
+  'INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id) VALUES (?, ?, ?, ?, ?, ?)'
+);
+tasks.forEach((task) =>
+  insertTask.run(
+    task.task_id,
+    task.text,
+    task.task_owner,
+    task.created_at,
+    task.project_id,
+    task.area_id
+  )
+);
 
-  projectUsers.forEach((projectUser) => {
-    const stmt = db.prepare(`
-      INSERT INTO project_users (project_id, user_id, role)
-      VALUES (?, ?, ?)
-    `)
-    stmt.run(projectUser.projectId, projectUser.userId, projectUser.role)
-  })
-}
+// Insert task tags
+const taskTags = [
+  { task_id: 'task_1', tag: 'urgent' },
+  { task_id: 'task_1', tag: 'important' },
+  { task_id: 'task_2', tag: 'development' },
+  { task_id: 'task_3', tag: 'design' },
+  { task_id: 'task_4', tag: 'mobile' },
+  { task_id: 'task_5', tag: 'integration' },
+  { task_id: 'task_6', tag: 'optimization' },
+  { task_id: 'task_7', tag: 'content' },
+];
 
-// Заполнение базы моковыми данными
-export function fillDatabaseWithMocks() {
-  createUsers()
-  createProjects()
-  createAreas()
-  createTasks()
-  addUserToProjects()
-  console.log('Моковые данные успешно добавлены в базу!')
-}
+const insertTaskTag = db.prepare(
+  'INSERT INTO task_tags (task_id, tag) VALUES (?, ?)'
+);
+taskTags.forEach((tt) => insertTaskTag.run(tt.task_id, tt.tag));
 
-fillDatabaseWithMocks()
+// Insert user sessions
+const userSessions = [
+  {
+    id: 'session_1',
+    user_id: 'user_1',
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'session_2',
+    user_id: 'user_2',
+    created_at: getRandomDate(),
+  },
+  {
+    id: 'session_3',
+    user_id: 'user_3',
+    created_at: getRandomDate(),
+  },
+];
+
+const insertUserSession = db.prepare(
+  'INSERT INTO user_sessions (id, user_id, created_at) VALUES (?, ?, ?)'
+);
+userSessions.forEach((us) =>
+  insertUserSession.run(us.id, us.user_id, us.created_at)
+);
+
+console.log('Database successfully populated with mock data.');
+
+export default db;
