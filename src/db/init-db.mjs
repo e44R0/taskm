@@ -75,6 +75,11 @@ db.exec(`
     );
 `);
 
+/*
+create table tags ... ( id NUMBER PRIMARY KEY, user_id, name)
+table project_tags 
+*/
+
 console.log('База данных и таблицы успешно созданы.');
 
 export default db;
