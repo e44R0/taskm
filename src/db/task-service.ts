@@ -216,15 +216,40 @@ export function deleteProject(projectId: string) {
   stmt.run(projectId);
 }
 
+// export function updateProject(data) {
+//   const stmt = db.prepare(`UPDATE projects
+//       SET
+//         title = ?,
+//         is_favorite = ?
+//       WHERE
+//         id = ?
+//   `);
+//   stmt.run(data.title, data.tags, data.id);
+// }
+
 export function updateProject(data) {
-  const stmt = db.prepare(`UPDATE projects
-      SET
+  db.transaction(() => {
+    db.prepare(
+      `UPDATE projects
+       SET
         title = ?,
         is_favorite = ?
-      WHERE
+       WHERE
         id = ?
-  `);
-  stmt.run(data.title, data.tags, data.id);
+      `
+    ).run(data.title, data.isFavorite ? 1 : 0, data.id);
+
+    db.prepare(`DELETE FROM project_tags WHERE project_id = ?`).run(data.id);
+
+    if (data.tags?.length) {
+      const placeholders = data.tags.map(() => '(?, ?)').join(',');
+      const flatValues = data.tags.flatMap((tagId) => [data.id, tagId]);
+
+      db.prepare(
+        `INSERT INTO project_tags (project_id, tag) VALUES ${placeholders}`
+      ).run(...flatValues);
+    }
+  })();
 }
 
 // id TEXT PRIMARY KEY,
