@@ -37,7 +37,7 @@ export const Card = (props: CardProps) => {
     const projectData = {
       id,
       title: initialTitle,
-      // tags: initialTags,
+      tags: initialTags,
       username,
       isFavorite: isFavorite,
       createdAt,
@@ -73,12 +73,6 @@ export const Card = (props: CardProps) => {
         >
           Edit
         </button>
-        <button
-          className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
-          onClick={deleteHandler}
-        >
-          Delete
-        </button>
       </div>
     </div>
   ) : (
@@ -112,6 +106,12 @@ export const Card = (props: CardProps) => {
           }}
         >
           Cancel
+        </button>
+        <button
+          className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
+          onClick={deleteHandler}
+        >
+          Delete
         </button>
         <button
           className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
