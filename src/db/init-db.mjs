@@ -46,18 +46,6 @@ db.exec(`
                                          FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE CASCADE
     );
 
-    CREATE TABLE IF NOT EXISTS task_tags (
-                                             task_id TEXT,
-                                             tag TEXT,
-                                             FOREIGN KEY (task_id) REFERENCES tasks(task_id) ON DELETE CASCADE
-    );
-
-    CREATE TABLE IF NOT EXISTS project_tags (
-                                                project_id TEXT,
-                                                tag TEXT,
-                                                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE
-    );
-
     CREATE TABLE IF NOT EXISTS project_users (
                                                  project_id TEXT NOT NULL,
                                                  user_id TEXT NOT NULL,
@@ -73,12 +61,32 @@ db.exec(`
                                                  created_at TEXT NOT NULL,
                                                  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
-`);
 
-/*
-create table tags ... ( id NUMBER PRIMARY KEY, user_id, name)
-table project_tags 
-*/
+    CREATE TABLE IF NOT EXISTS tags (
+                                        id TEXT PRIMARY KEY,
+                                        user_id TEXT NOT NULL,
+                                        tag_name TEXT NOT NULL,
+                                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                        UNIQUE(user_id, tag_name)
+    );
+
+    CREATE TABLE IF NOT EXISTS project_tags (
+                                                project_id TEXT NOT NULL,
+                                                tag_id TEXT NOT NULL,
+                                                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+                                                FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
+                                                PRIMARY KEY (project_id, tag_id)
+    );
+
+    CREATE TABLE IF NOT EXISTS task_tags (
+                                              task_id TEXT NOT NULL,
+                                              tag_id TEXT NOT NULL,
+                                              FOREIGN KEY (task_id) REFERENCES tasks(task_id) ON DELETE CASCADE,
+                                              FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
+                                              PRIMARY KEY (task_id, tag_id)
+    );
+
+`);
 
 console.log('База данных и таблицы успешно созданы.');
 
