@@ -201,11 +201,59 @@ export function addNewProject(data: Project) {
     ).run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
 
     if (data.tags?.length) {
-      const placeholders = data.tags.map(() => '(?, ?)').join(',');
-      const flatValues = data.tags.flatMap((tagId) => [data.id, tagId]);
+      const userTags =
+        (db
+          .prepare('SELECT tag_name, id FROM tags WHERE user_id = ?')
+          .get(data.userId) as Array<{ tag_name: string; id: string }>) || [];
+
+      console.log('userTags:', userTags);
+      // data.tags.map((tagName) => {userTags.find(tagName)});
+
+      const newTags = data.tags.filter((tag) => {
+        const userTag = userTags.find((t) => t.tag_name === tag);
+
+        if (userTag) {
+          return false;
+        }
+
+        return true;
+      });
+
+      console.log('newTags:', newTags);
+
+      newTags.forEach((tagName) => {
+        const tagId = crypto.randomUUID();
+        const result = db
+          .prepare(`INSERT INTO tags (id, user_id, tag_name) VALUES (?, ?, ?)`)
+          .run(tagId, data.userId, tagName);
+        console.log('insert result:', result);
+      });
+
+      const userTags2 =
+        (db
+          .prepare('SELECT tag_name, id FROM tags WHERE user_id = ?')
+          .all(data.userId) as Array<{ tag_name: string; id: string }>) || [];
+
+      console.log('userTags2:', userTags2);
+      const tagIds = data.tags.map((tag) => {
+        const userTag = userTags2.find((t) => {
+          return t.tag_name === tag;
+        });
+
+        if (!userTag) {
+          throw new Error(`Can't find tag '${tag}' in user tags`);
+        }
+
+        return userTag.id;
+      });
+
+      const placeholders = tagIds.map(() => '(?, ?)').join(',');
+      const flatValues = tagIds.flatMap((tagId) => [data.id, tagId]);
+
+      console.log('placeholders ->>>', flatValues);
 
       db.prepare(
-        `INSERT INTO project_tags (project_id, tag) VALUES ${placeholders}`
+        `INSERT INTO project_tags (project_id, tag_id) VALUES ${placeholders}`
       ).run(...flatValues);
     }
   })();
@@ -263,30 +311,24 @@ export function updateProject(data) {
     db.prepare(`DELETE FROM project_tags WHERE project_id = ?`).run(data.id);
 
     if (data.tags?.length) {
-      const project = db
+      const { user_id: userId } = db
         .prepare(`SELECT user_id FROM projects WHERE id = ?`)
-        .get(data.id);
+        .get(data.id) as { user_id: string };
 
-      if (!project) {
+      if (!userId) {
         throw new Error('Проект не найден');
       }
 
-      const projectOwner = project.user_id;
-
       data.tags.forEach((tagName) => {
-        const existingTag = db
+        let { id: tagId } = db
           .prepare(`SELECT id FROM tags WHERE user_id = ? AND tag_name = ?`)
-          .get(projectOwner, tagName);
+          .get(userId, tagName) as { id: string };
 
-        let tagId;
-
-        if (existingTag) {
-          tagId = existingTag.id;
-        } else {
+        if (!tagId) {
           tagId = crypto.randomUUID();
           db.prepare(
             `INSERT INTO tags (id, user_id, tag_name) VALUES (?, ?, ?)`
-          ).run(tagId, projectOwner, tagName);
+          ).run(tagId, userId, tagName);
         }
 
         db.prepare(
