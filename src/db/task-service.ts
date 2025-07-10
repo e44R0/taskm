@@ -42,7 +42,7 @@ export function getProjectsWithTags(user_id): Project[] {
 export function getProjectsById(id: string, userId: string): Project {
   const stmt = db.prepare(`
     SELECT p.id, p.title, p.user_id,
-           GROUP_CONCAT(pt.tag, ', ') AS tags,
+           GROUP_CONCAT(pt.tag_id, ', ') AS tags,
            p.is_favorite,
            p.created_at as createdAt,
            u.username
@@ -93,7 +93,7 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
           t.text,
           t.task_owner, 
           t.created_at,
-          GROUP_CONCAT(tt.tag, ', ') as tags
+          GROUP_CONCAT(tt.tag_id, ', ') as tags
       FROM areas a
                LEFT JOIN tasks t ON a.id = t.area_id
                LEFT JOIN task_tags tt ON t.task_id = tt.task_id
