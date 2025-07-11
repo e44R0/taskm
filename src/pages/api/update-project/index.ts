@@ -10,7 +10,7 @@ export default async function handler(
     const updatedProject = req.body;
     console.log(updatedProject);
     try {
-      console.log('перед записью');
+      console.log('перед записью: ', updatedProject);
       updateProject(updatedProject);
       console.log('по завершению записи');
       return res.status(200).json(updatedProject);

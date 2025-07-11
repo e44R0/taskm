@@ -47,7 +47,7 @@ export const Card = (props: CardProps) => {
       // setErrorMessage(null);
       updateProject(projectData).then((data) => {
         setEditMode(!isEditMode);
-        console.log(data);
+        console.log('data: ', data);
       });
     } catch (error) {
       // setErrorMessage((error as Error).message)

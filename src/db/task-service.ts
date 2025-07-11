@@ -19,16 +19,20 @@ export function getUserById(userId: string) {
 
 export function getProjectsWithTags(user_id): Project[] {
   const stmt = db.prepare(`
-    SELECT p.id, p.title, p.user_id,
-           GROUP_CONCAT(pt.tag_id, ',') AS tags,
-           p.is_favorite,
-           p.created_at as createdAt,
-           u.username
-    FROM projects p
-    LEFT JOIN project_tags pt ON p.id = pt.project_id
-    LEFT JOIN users u ON u.id = p.user_id
-    WHERE p.user_id = ?
-    GROUP BY p.id
+      SELECT
+          p.id,
+          p.title,
+          p.user_id,
+          GROUP_CONCAT(t.tag_name, ',') AS tags,
+          p.is_favorite,
+          p.created_at as createdAt,
+          u.username
+      FROM projects p
+               LEFT JOIN project_tags pt ON p.id = pt.project_id
+               LEFT JOIN tags t ON pt.tag_id = t.id
+               LEFT JOIN users u ON u.id = p.user_id
+      WHERE p.user_id = ?
+      GROUP BY p.id
   `);
   const result = stmt.all(user_id);
   console.log('result:', result);
@@ -204,7 +208,7 @@ export function addNewProject(data: Project) {
       const userTags =
         (db
           .prepare('SELECT tag_name, id FROM tags WHERE user_id = ?')
-          .get(data.userId) as Array<{ tag_name: string; id: string }>) || [];
+          .all(data.userId) as Array<{ tag_name: string; id: string }>) || [];
 
       console.log('userTags:', userTags);
       // data.tags.map((tagName) => {userTags.find(tagName)});
@@ -264,42 +268,6 @@ export function deleteProject(projectId: string) {
   stmt.run(projectId);
 }
 
-// export function updateProject(data) {
-//   const stmt = db.prepare(`UPDATE projects
-//       SET
-//         title = ?,
-//         is_favorite = ?
-//       WHERE
-//         id = ?
-//   `);
-//   stmt.run(data.title, data.tags, data.id);
-// }
-
-// export function updateProject(data) {
-//   db.transaction(() => {
-//     db.prepare(
-//       `UPDATE projects
-//        SET
-//         title = ?,
-//         is_favorite = ?
-//        WHERE
-//         id = ?
-//       `
-//     ).run(data.title, data.isFavorite ? 1 : 0, data.id);
-
-//     db.prepare(`DELETE FROM project_tags WHERE project_id = ?`).run(data.id);
-
-//     if (data.tags?.length) {
-//       const placeholders = data.tags.map(() => '(?, ?)').join(',');
-//       const flatValues = data.tags.flatMap((tagId) => [data.id, tagId]);
-
-//       db.prepare(
-//         `INSERT INTO project_tags (project_id, tag_id) VALUES ${placeholders}`
-//       ).run(...flatValues);
-//     }
-//   })();
-// }
-
 export function updateProject(data) {
   db.transaction(() => {
     db.prepare(
@@ -319,7 +287,7 @@ export function updateProject(data) {
         throw new Error('Проект не найден');
       }
 
-      data.tags.forEach((tagName) => {
+      data.tags.forEach((tagName:string) => {
         let { id: tagId } = db
           .prepare(`SELECT id FROM tags WHERE user_id = ? AND tag_name = ?`)
           .get(userId, tagName) as { id: string };
@@ -330,7 +298,7 @@ export function updateProject(data) {
             `INSERT INTO tags (id, user_id, tag_name) VALUES (?, ?, ?)`
           ).run(tagId, userId, tagName);
         }
-
+        console.log(tagName, '-> ', tagId);
         db.prepare(
           `INSERT INTO project_tags (project_id, tag_id) VALUES (?, ?)`
         ).run(data.id, tagId);
