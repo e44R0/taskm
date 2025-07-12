@@ -156,13 +156,6 @@ export function addNewTask(project_id: string, area_id: string, task: Task) {
   );
 }
 
-// UPDATE employees
-// SET city = 'Toronto',
-// state = 'ON',
-// postalcode = 'M5P 2N7'
-// WHERE
-// employeeid = 4;
-
 export function updateTask(task: Task) {
   const stmt = db.prepare(`UPDATE tasks
       SET
@@ -188,15 +181,6 @@ export function addNewArea(
   stmt.run(area.title, projectId, area.id);
 }
 
-// export function addNewProject(data: Project) {
-//   const stmt =
-//     db.prepare(`INSERT INTO projects (id, title, user_id, is_favorite, created_at)
-//                            VALUES (?, ?, ?, ?, datetime('now', 'localtime'));
-
-//                             `);
-//   stmt.run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
-// }
-
 export function addNewProject(data: Project) {
   db.transaction(() => {
     db.prepare(
@@ -209,9 +193,6 @@ export function addNewProject(data: Project) {
         (db
           .prepare('SELECT tag_name, id FROM tags WHERE user_id = ?')
           .all(data.userId) as Array<{ tag_name: string; id: string }>) || [];
-
-      console.log('userTags:', userTags);
-      // data.tags.map((tagName) => {userTags.find(tagName)});
 
       const newTags = data.tags.filter((tag) => {
         const userTag = userTags.find((t) => t.tag_name === tag);
@@ -288,11 +269,13 @@ export function updateProject(data) {
       }
 
       data.tags.forEach((tagName:string) => {
-        let { id: tagId } = db
+        console.log('Начинаю проверять ТАГ: ', tagName);
+        let { id: tagId } = (db
           .prepare(`SELECT id FROM tags WHERE user_id = ? AND tag_name = ?`)
-          .get(userId, tagName) as { id: string };
+          .get(userId, tagName) as { id: string }) || { id : '' }               //ИСПРАВИТЬ!!!
 
         if (!tagId) {
+          console.log(tagName, 'не найден, создаю!');
           tagId = crypto.randomUUID();
           db.prepare(
             `INSERT INTO tags (id, user_id, tag_name) VALUES (?, ?, ?)`
@@ -306,9 +289,3 @@ export function updateProject(data) {
     }
   })();
 }
-
-// id TEXT PRIMARY KEY,
-// title TEXT NOT NULL,
-// user_id TEXT NOT NULL,
-// is_favorite BOOLEAN DEFAULT 0,
-// created_at TEXT NOT NULL,
