@@ -91,7 +91,16 @@ export const Card = (props: CardProps) => {
           <input
             type="text"
             value={initialTags.join(', ')}
-            onChange={(e) => setInitialTags(e.target.value.split(', '))}
+            onChange={(e) => {
+              setInitialTags(e.target.value.split(', '));
+            }}
+            onBlur={(e) => {
+              const tags = e.target.value
+                .split(',')
+                .map(tag => tag.trim())
+                .filter(tag => tag.length > 0);
+              setInitialTags(tags);
+            }}
           />
         </div>
         <div>Owner: {username}</div>
