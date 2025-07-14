@@ -269,19 +269,17 @@ export function updateProject(data) {
       }
 
       data.tags.forEach((tagName:string) => {
-        console.log('Начинаю проверять ТАГ: ', tagName);
         let { id: tagId } = (db
           .prepare(`SELECT id FROM tags WHERE user_id = ? AND tag_name = ?`)
           .get(userId, tagName) as { id: string }) || { id : '' }               //ИСПРАВИТЬ!!!
 
         if (!tagId) {
-          console.log(tagName, 'не найден, создаю!');
           tagId = crypto.randomUUID();
           db.prepare(
             `INSERT INTO tags (id, user_id, tag_name) VALUES (?, ?, ?)`
           ).run(tagId, userId, tagName);
         }
-        console.log(tagName, '-> ', tagId);
+
         db.prepare(
           `INSERT INTO project_tags (project_id, tag_id) VALUES (?, ?)`
         ).run(data.id, tagId);
