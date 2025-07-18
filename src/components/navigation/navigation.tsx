@@ -53,37 +53,31 @@ export const Navigation = () => {
 
         <Separator className="bg-[#2a2a2a]" />
 
-        <nav className="flex-1 p-4">
-          <ul className="space-y-2">
-            <li>
-              <Link href="/account">
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start text-gray-300 hover:text-white hover:bg-[#2a2a2a] ${isCollapsed ? "px-2" : "px-4"}`}
-                >
-                  <User className="h-5 w-5" />
-                  {!isCollapsed && <span className="ml-3">Account</span>}
-                </Button>
-              </Link>
-            </li>
-            <li>
-              <Link href="/settings">
-                <Button
-                  variant="ghost"
-                  className={`w-full justify-start text-gray-300 hover:text-white hover:bg-[#2a2a2a] ${isCollapsed ? "px-2" : "px-4"}`}
-                >
-                  <Settings className="h-5 w-5" />
-                  {!isCollapsed && <span className="ml-3">Settings</span>}
-                </Button>
-              </Link>
-            </li>
-          </ul>
-        </nav>
-
-        <Separator className="bg-[#2a2a2a]" />
+        <div className="flex-1"></div>
 
 
         <div className="p-4 space-y-2">
+          <div className="space-y-2 mb-4">
+            <Link href="/account">
+              <Button
+                variant="ghost"
+                className={`w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 ${isCollapsed ? "px-2" : "px-4"}`}
+              >
+                <User className="h-5 w-5" />
+                {!isCollapsed && <span className="ml-3">Account</span>}
+              </Button>
+            </Link>
+            <Link href="/settings">
+              <Button
+                variant="ghost"
+                className={`w-full justify-start text-gray-300 hover:text-white hover:bg-gray-800 ${isCollapsed ? "px-2" : "px-4"}`}
+              >
+                <Settings className="h-5 w-5" />
+                {!isCollapsed && <span className="ml-3">Settings</span>}
+              </Button>
+            </Link>
+          </div>
+
           <Button
             variant="ghost"
             className={`w-full justify-start text-red-400 hover:text-red-300 hover:bg-red-900/20 ${
@@ -99,7 +93,7 @@ export const Navigation = () => {
             variant="outline"
             size="sm"
             onClick={toggleSidebar}
-            className={`w-full border-[#2a2a2a] text-gray-300 hover:bg-[#2a2a2a] hover:text-white ${isCollapsed ? "px-2" : "px-4"}`}
+            className={`w-full border-gray-700 text-gray-300 hover:bg-gray-800 hover:text-white ${isCollapsed ? "px-2" : "px-4"}`}
           >
             {isCollapsed ? (
               <ChevronRight className="h-4 w-4" />

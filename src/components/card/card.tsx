@@ -97,8 +97,8 @@ export const Card = (props: CardProps) => {
             onBlur={(e) => {
               const tags = e.target.value
                 .split(',')
-                .map(tag => tag.trim())
-                .filter(tag => tag.length > 0);
+                .map((tag) => tag.trim())
+                .filter((tag) => tag.length > 0);
               setInitialTags(tags);
             }}
           />
