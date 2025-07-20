@@ -3,4 +3,5 @@ export interface Session {
   userId: string;
   createdAt: Date;
   username: string;
+  email: string;
 }

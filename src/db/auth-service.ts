@@ -20,7 +20,7 @@ export function createSession(usedId: string, uuid: string) {
 export function getSession(id: string): Session {
   const session = db
     .prepare(
-      `SELECT us.id, us.user_id, us.created_at, u.username FROM user_sessions us 
+      `SELECT us.id, us.user_id, us.created_at, u.username, u.email FROM user_sessions us 
       LEFT JOIN users u ON us.user_id = u.id 
       WHERE us.id = ?`
     )
@@ -29,6 +29,7 @@ export function getSession(id: string): Session {
     user_id: string;
     created_at: string;
     username: string;
+    email: string;
   };
 
   return {
@@ -36,6 +37,7 @@ export function getSession(id: string): Session {
     userId: session['user_id'],
     createdAt: new Date(session['created_at']),
     username: session.username,
+    email: session.email,
   };
 }
 
