@@ -2,9 +2,7 @@ import { authCheck } from '@/utils/utils';
 import type { NextApiRequest, NextApiResponse } from 'next';
 
 interface UserData {
-  id: string;
-  user_id: string;
-  created_at: string;
+  userId: string;
   username: string;
   email: string;
 }
