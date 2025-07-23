@@ -15,11 +15,10 @@ export const Card = (props: CardProps) => {
   const [isEditMode, setEditMode] = useState(false);
   const {
     project: { id, title, tags, username, isFavorite, createdAt },
-    project,
     onDelete,
   } = props;
 
-  console.log('project:', project);
+  // console.log('project:', project);
 
   const [initialTitle, setInitialTitle] = useState(title);
   const [initialTags, setInitialTags] = useState(tags);

@@ -14,6 +14,8 @@ export const Navigation = () => {
   const auth = useContext(AuthContext);
   const [isCollapsed, setIsCollapsed] = useState(false)
 
+  console.log('username', auth.userData?.username);
+
   const toggleSidebar = () => {
     setIsCollapsed(!isCollapsed)
   }
@@ -23,6 +25,7 @@ export const Navigation = () => {
       .then(() => {
         console.log('Вы успешно разлогинились');
         auth.setStatus('unauthorized');
+        auth.setUserData(null);
         router.push('/login');
       })
       .catch((err) => {
@@ -45,8 +48,8 @@ export const Navigation = () => {
           </Avatar>
           {!isCollapsed && (
             <div className="text-center">
-              <h3 className="font-semibold text-lg text-white">John Doe</h3>
-              <p className="text-sm text-gray-400">john@example.com</p>
+              <h3 className="font-semibold text-lg text-white">{auth.userData?.username}</h3>
+              <p className="text-sm text-gray-400">{auth.userData?.email}</p>
             </div>
           )}
         </div>
