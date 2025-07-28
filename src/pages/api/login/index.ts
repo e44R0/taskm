@@ -2,6 +2,7 @@ import { createSession, getUserByEmail } from '@/db/auth-service';
 import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
+import { UserData } from '@/types/users';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const sessionData = req.body;
@@ -19,8 +20,14 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       path: '/',
     });
 
+    const data: UserData = {
+      userId: userData.id,
+      username: userData.username,
+      email: userData.email,
+    };
+
     res.setHeader('Set-Cookie', cookie);
-    res.status(200).json({ message: 'Successfully set cookie!' });
+    res.status(200).json({ message: 'Successfully set cookie!', data });
   } else {
     res.status(401).json({ message: 'Not authorized session!' });
   }

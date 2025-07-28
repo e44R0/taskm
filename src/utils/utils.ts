@@ -26,5 +26,9 @@ export const authCheck = (req: NextApiRequest, res: NextApiResponse) => {
     return null;
   }
 
-  return { userId: session.userId, username: session.username, email: session.email  };
+  return {
+    userId: session.userId,
+    username: session.username,
+    email: session.email,
+  };
 };

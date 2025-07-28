@@ -11,6 +11,8 @@ export const login = async (loginData: { login: string; password: string }) => {
     if (!response.ok) {
       return Promise.reject(new Error(`Ошибка: ${response.status}`));
     }
+
+    return response.json();
   } catch (error) {
     console.error('Ошибка при авторизации:', error);
     return Promise.reject(error);
