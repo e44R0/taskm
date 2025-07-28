@@ -16,8 +16,9 @@ export default function LoginForm() {
     if (username && password) {
       setError('');
       login({ login: username, password: password })
-        .then(() => {
+        .then((data) => {
           auth.setStatus('authorized');
+          auth.setUserData(data.data);
           router.replace('/');
         })
         .catch(() => {
