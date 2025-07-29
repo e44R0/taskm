@@ -1,4 +1,4 @@
-import { User } from '@/types/users';
+import { User } from '@/types/frontend/users';
 import db from './init-db.mjs';
 import { Session } from '@/types/session';
 

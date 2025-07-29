@@ -1,6 +1,6 @@
 import { authCheck } from '@/utils/utils';
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { ResponseData } from '@/types/users';
+import { ResponseData } from '@/types/frontend/users';
 
 export default async function handler(
   req: NextApiRequest,

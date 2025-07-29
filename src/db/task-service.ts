@@ -1,6 +1,6 @@
 import db from './init-db.mjs';
 // import { Task } from '@/types/task'
-import { User } from '@/types/users';
+import { User } from '@/types/frontend/users';
 import { Project } from '@/types/project';
 import { Area } from '@/types/area';
 import { Task } from '@/types/task';

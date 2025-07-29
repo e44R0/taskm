@@ -2,7 +2,7 @@ import { createSession, getUserByEmail } from '@/db/auth-service';
 import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
-import { UserData } from '@/types/users';
+import { UserData } from '@/types/frontend/users';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const sessionData = req.body;
