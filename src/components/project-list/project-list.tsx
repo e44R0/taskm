@@ -1,4 +1,4 @@
-import { Card } from '@/components/card/card';
+import { ProjectCard } from '@/components/card/project-card';
 import style from './project-list.module.css';
 import { useEffect, useState } from 'react';
 import { Project } from '@/types/project';
@@ -36,7 +36,7 @@ export const ProjectList = () => {
   return (
     <div className={style.projectList}>
       {projects.map((project) => (
-        <Card key={project.id} project={project} onDelete={() => deleteProjectHandler(project.id)}/>
+        <ProjectCard key={project.id} project={project} onDelete={() => deleteProjectHandler(project.id)}/>
       ))}
       {isCreationMode && (
         <NewCard

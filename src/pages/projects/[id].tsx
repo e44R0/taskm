@@ -1,20 +1,19 @@
 import { useRouter } from 'next/router';
-import { Project as TProject } from '@/types/project';
 import { Project } from '@/components/project/project';
 import { useEffect, useState } from 'react';
-import { Area } from '@/types/area';
+import { FE } from '@/types/frontend';
 import { fetchProject } from '@/api/get-projects';
 import { Navigation } from '@/components/navigation/navigation';
 
 export default function ProjectID() {
   const router = useRouter();
   const { id } = router.query;
-  const [project, setProject] = useState<TProject>();
+  const [project, setProject] = useState<FE.ProjectWithAreas>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const updateProjectWithArea = (
-    area: Area,
+    area: FE.Area,
     action: 'add' | 'update' | 'delete'
   ) => {
     setProject((prevProject) => {

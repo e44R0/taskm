@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Task } from '@/types/task';
 import { deleteTask } from '@/db/task-service';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Task | { message: string }>
+  res: NextApiResponse<{ message: string }>
 ) {
   if (req.method === 'POST') {
     const taskId = req.body.taskId;

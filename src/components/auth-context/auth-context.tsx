@@ -1,13 +1,13 @@
 import { fetcher } from '@/api/fetcher';
 import { useRouter } from 'next/router';
 import React, { ReactNode, useEffect, useState } from 'react';
-import { User } from '@/types/frontend/users';
+import { FE } from '@/types/frontend';
 
 type AuthContextType = {
   status: 'checking' | 'authorized' | 'unauthorized';
-  userData: User | null;
+  userData: FE.User | null;
   setStatus: (v: 'checking' | 'authorized' | 'unauthorized') => void;
-  setUserData: (data: User | null) => void;
+  setUserData: (data: FE.User | null) => void;
 };
 
 export const AuthContext = React.createContext<AuthContextType>({
@@ -19,7 +19,7 @@ export const AuthContext = React.createContext<AuthContextType>({
 
 export const AuthProvider = (props: { children: ReactNode }) => {
   const router = useRouter();
-  const [userData, setUserData] = useState<User | null>(null);
+  const [userData, setUserData] = useState<FE.User | null>(null);
   const [authState, setAuthState] = useState<
     'checking' | 'authorized' | 'unauthorized'
   >('checking');

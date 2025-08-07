@@ -1,6 +1,8 @@
 import { NextRouter } from 'next/router';
 
-export const fetcher = async ({
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const fetcher = async <T extends object = any>({
+  // unknown
   router,
   method,
   src,
@@ -29,7 +31,7 @@ export const fetcher = async ({
       return Promise.reject(new Error(`Ошибка: ${response.status}`));
     }
 
-    return response.json();
+    return response.json() as Promise<T>;
   } catch (error) {
     console.error('Ошибка:', error);
     return Promise.reject(error);

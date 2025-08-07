@@ -1,13 +1,14 @@
-import { User } from '@/types/frontend/users';
+import { BE } from '@/types/backend';
 import db from './init-db.mjs';
-import { Session } from '@/types/session';
 
 //export function getUserByName(name: string) {
 //  return db.prepare('SELECT * FROM users WHERE username = ?').get(name) as User;
 // }
 
 export function getUserByEmail(email: string) {
-  return db.prepare('SELECT * FROM users WHERE email = ?').get(email) as User;
+  return db
+    .prepare('SELECT * FROM users WHERE email = ?')
+    .get(email) as BE.User;
 }
 
 export function createSession(usedId: string, uuid: string) {
@@ -17,7 +18,7 @@ export function createSession(usedId: string, uuid: string) {
   stmt.run(uuid, usedId);
 }
 
-export function getSession(id: string): Session {
+export function getSession(id: string): BE.Session {
   const session = db
     .prepare(
       `SELECT us.id, us.user_id, us.created_at, u.username, u.email FROM user_sessions us 

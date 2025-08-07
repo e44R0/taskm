@@ -1,12 +1,11 @@
-import { Area as TArea } from '@/types/area';
+import { FE } from '@/types/frontend';
 import { Task } from '../task/task';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Task as TTask } from '@/types/task';
 import { createTask } from '@/api/create-task';
 
 interface AreaProps {
-  area: TArea;
+  area: FE.Area;
 }
 
 export const Area = (props: AreaProps) => {
@@ -14,7 +13,7 @@ export const Area = (props: AreaProps) => {
     area: { id, title, tasks },
   } = props;
   const router = useRouter();
-  const [currentTasks, setCurrentTasks] = React.useState<TTask[]>(tasks);
+  const [currentTasks, setCurrentTasks] = React.useState<FE.Task[]>(tasks);
   const projectId = router.query.id as string;
 
   const settingsBtnHandler = (evt: React.MouseEvent<HTMLButtonElement>) => {

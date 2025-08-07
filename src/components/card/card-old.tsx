@@ -18,8 +18,6 @@ export const Card = (props: CardProps) => {
     onDelete,
   } = props;
 
-  // console.log('project:', project);
-
   const [initialTitle, setInitialTitle] = useState(title);
   const [initialTags, setInitialTags] = useState(tags);
 

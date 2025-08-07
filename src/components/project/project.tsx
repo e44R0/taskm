@@ -1,14 +1,14 @@
 import classes from './projcet.module.css';
-import { Project as TProject } from '../../types/project';
-import { Area as TArea } from '../../types/area';
+
+import { FE } from '@/types/frontend';
 import { Area } from '../area/area';
 import { CSSProperties } from 'react';
 import { createArea } from '@/api/create-area';
 
 interface ProjectProps {
-  project: TProject;
+  project: FE.ProjectWithAreas;
   updateProjectWithArea: (
-    area: TArea,
+    area: FE.Area,
     action: 'add' | 'update' | 'delete'
   ) => void;
 }
