@@ -3,7 +3,10 @@ import { resolve } from 'path';
 // import dotenv from 'dotenv';
 import 'dotenv/config';
 
-// dotenv.config();
+if (!process.env.DB_PATH) {
+  throw new Error('DB_PATH не определена в .env файле!');
+}
+
 const dbPath = resolve(process.env.DB_PATH);
 
 const db = new Database(dbPath, {

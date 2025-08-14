@@ -40,7 +40,7 @@ export const Navigation = () => {
   return (
     <div className="flex h-screen bg-[#0A0A0A]">
       <div
-        className={`bg-[#0A0A0A] border-r border-[#2a2a2a] transition-all duration-300 ease-in-out ${
+        className={`bg-[#0A0A0A] border-r border-[#0A0A0A] transition-all duration-300 ease-in-out ${
           isCollapsed ? 'w-16' : 'w-64'
         } flex flex-col`}
       >
@@ -64,7 +64,7 @@ export const Navigation = () => {
           )}
         </div>
 
-        <Separator className="bg-[#2a2a2a]" />
+        {/*<Separator className="bg-[#2a2a2a]" />*/}
 
         <div className="flex-1"></div>
 

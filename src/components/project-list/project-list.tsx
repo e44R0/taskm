@@ -1,4 +1,4 @@
-import { ProjectCard } from '@/components/card/project-card';
+import { ProjectCard } from '@/components/project-card/project-card';
 import style from './project-list.module.css';
 import { useEffect, useState } from 'react';
 import { Project } from '@/types/project';
@@ -25,7 +25,9 @@ export const ProjectList = () => {
   };
 
   const deleteProjectHandler = (projectId: string) => {
-    const projectIndex = projects.findIndex((project) => project.id === projectId);
+    const projectIndex = projects.findIndex(
+      (project) => project.id === projectId
+    );
 
     if (projectIndex !== -1) {
       projects.splice(projectIndex, 1);
@@ -36,7 +38,11 @@ export const ProjectList = () => {
   return (
     <div className={style.projectList}>
       {projects.map((project) => (
-        <ProjectCard key={project.id} project={project} onDelete={() => deleteProjectHandler(project.id)}/>
+        <ProjectCard
+          key={project.id}
+          project={project}
+          onDelete={() => deleteProjectHandler(project.id)}
+        />
       ))}
       {isCreationMode && (
         <NewCard
@@ -51,7 +57,7 @@ export const ProjectList = () => {
       )}
       <div>
         <button
-          className="p-2 m-8 mx-2 max-w-[300px] min-w-[300px] bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
+          className="border border-[#2a2a2a] p-[3px] mt-[30px] ml-[10px] max-w-[400px] min-w-[400px]  text-gray-300 text-sm hover:bg-[#2a2a2a] transition-colors rounded-sm"
           onClick={addNewProjectHandler}
         >
           Create New Project
