@@ -74,10 +74,13 @@ export const ProjectCard = (props: CardProps) => {
   };
 
   return !isEditMode ? (
-    <Card className={`${styles.card} rounded-md`} onClick={handleCardClick}>
-      <div className="flex flex-col">
-        <div>
-          <div className="flex">
+    <Card
+      className={`${styles.card} rounded-md group p-3 border-[#2a2a2a]`}
+      onClick={handleCardClick}
+    >
+      <div className="flex flex-col h-full justify-between">
+        <div className="pb-2">
+          <div className="flex pb-2">
             <div
               className="text-lg font-semibold text-gray-300 line-clamp-2 flex-1 mr-2"
               // placeholder="Название проекта"
@@ -115,44 +118,39 @@ export const ProjectCard = (props: CardProps) => {
           </div>
         </div>
 
-        {/*<div>Owner: {username}</div>*/}
-        {/*<div>Favorite: {isFavorite ? 'true' : 'false'}</div>*/}
-
         <div className="flex items-center justify-between">
-          {/* <div className="flex items-center space-x-3"> */}
-            <div className="flex items-center space-x-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage
-                  src={`https://cdn-icons-png.flaticon.com/512/126/126486.png}`}
-                  // alt={owner.name}
-                />
-                <AvatarFallback className="text-xs bg-gradient-to-br from-zinc-600 to-zinc-800 text-zinc-200 font-medium border border-zinc-700">
-                  {/*{getInitials(owner.name)}*/}
-                </AvatarFallback>
-              </Avatar>
-              <div className="">
-                <span className="text-sm font-medium text-zinc-200">
-                  {username}
-                </span>
-                <div className="flex items-center text-xs text-zinc-400">
-                  <Calendar className="h-3 w-3 mr-1" />
-                  {formatDate(createdAt)}
-                </div>
+          <div className="flex items-center space-x-2">
+            <Avatar className="h-8 w-8">
+              <AvatarImage
+                src={`https://cdn-icons-png.flaticon.com/512/126/126486.png}`}
+                alt={username}
+              />
+              <AvatarFallback className="text-xs bg-gradient-to-br from-zinc-600 to-zinc-800 text-zinc-200 font-medium border border-zinc-700">
+                {/*{getInitials(owner.name)}*/}
+              </AvatarFallback>
+            </Avatar>
+            <div className="">
+              <span className="text-sm font-medium text-zinc-200">
+                {username}
+              </span>
+              <div className="flex items-center text-xs text-zinc-400">
+                <Calendar className="h-3 w-3 mr-1" />
+                {formatDate(createdAt)}
               </div>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                setEditMode(!isEditMode);
-              }}
-              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-zinc-800/50 border-zinc-700 hover:bg-zinc-700/50 text-zinc-200"
-            >
-              <Edit className="h-4 w-4 mr-1" />
-              Edit
-            </Button>
           </div>
-        {/* </div> */}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => {
+              setEditMode(!isEditMode);
+            }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-zinc-800/50 border-zinc-700 hover:bg-zinc-700/50 hover:text-zinc-200"
+          >
+            <Edit className="h-4 w-4 mr-1" />
+            Edit
+          </Button>
+        </div>
       </div>
     </Card>
   ) : (

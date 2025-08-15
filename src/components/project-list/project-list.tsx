@@ -57,7 +57,7 @@ export const ProjectList = () => {
       )}
       <div>
         <button
-          className="border border-[#2a2a2a] p-[3px] max-w-[400px] min-w-[400px]  text-gray-300 text-sm hover:bg-[#2a2a2a] transition-colors rounded-sm"
+          className="w-full border border-[#2a2a2a] text-gray-300 text-sm hover:bg-[#2a2a2a] transition-colors rounded-sm"
           onClick={addNewProjectHandler}
         >
           Create New Project
