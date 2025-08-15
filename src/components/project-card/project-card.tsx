@@ -74,7 +74,7 @@ export const ProjectCard = (props: CardProps) => {
   };
 
   return !isEditMode ? (
-    <Card className={`${styles.card} rounded-md `} onClick={handleCardClick}>
+    <Card className={`${styles.card} rounded-md`} onClick={handleCardClick}>
       <div className="flex flex-col">
         <div>
           <div className="flex">
@@ -119,7 +119,7 @@ export const ProjectCard = (props: CardProps) => {
         {/*<div>Favorite: {isFavorite ? 'true' : 'false'}</div>*/}
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
+          {/* <div className="flex items-center space-x-3"> */}
             <div className="flex items-center space-x-2">
               <Avatar className="h-8 w-8">
                 <AvatarImage
@@ -130,7 +130,7 @@ export const ProjectCard = (props: CardProps) => {
                   {/*{getInitials(owner.name)}*/}
                 </AvatarFallback>
               </Avatar>
-              <div className="flex flex-wrap">
+              <div className="">
                 <span className="text-sm font-medium text-zinc-200">
                   {username}
                 </span>
@@ -146,13 +146,13 @@ export const ProjectCard = (props: CardProps) => {
               onClick={() => {
                 setEditMode(!isEditMode);
               }}
-              className="opacity-100 group-hover:opacity-100 transition-opacity duration-200 bg-zinc-800/50 border-zinc-700 hover:bg-zinc-700/50 text-zinc-200"
+              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 bg-zinc-800/50 border-zinc-700 hover:bg-zinc-700/50 text-zinc-200"
             >
               <Edit className="h-4 w-4 mr-1" />
               Edit
             </Button>
           </div>
-        </div>
+        {/* </div> */}
       </div>
     </Card>
   ) : (
