@@ -2,7 +2,7 @@ import { createSession, getUserByEmail } from '@/db/auth-service';
 import { serialize } from 'cookie';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
-import { UserData } from '@/types/users';
+import { DTO } from '@/types/transfer';
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const sessionData = req.body;
@@ -20,7 +20,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
       path: '/',
     });
 
-    const data: UserData = {
+    const data: DTO.User = {
       userId: userData.id,
       username: userData.username,
       email: userData.email,

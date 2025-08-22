@@ -1,4 +1,4 @@
-import { Task as TTask } from '@/types/task';
+import { FE } from '@/types/frontend';
 import { useState } from 'react';
 import { updateTask } from '@/api/update-task';
 import { deleteTask } from '@/api/delete-task';
@@ -6,7 +6,7 @@ import { formatDate } from '../utils';
 
 interface TaskProps {
   areaId: string;
-  task: TTask;
+  task: FE.Task;
   onDelete: () => void;
 }
 
@@ -76,7 +76,10 @@ export const Task = (props: TaskProps) => {
           </div>
         </div>
       ) : (
-        <div className="task m-1 mb-3 p-2  bg-[#1c1c1c]" onClick={cancelHandler}>
+        <div
+          className="task m-1 mb-3 p-2  bg-[#1c1c1c]"
+          onClick={cancelHandler}
+        >
           <div>
             <div className="pb-2">{initialText}</div>
             <div className="pb-2">Tags: {initialTags.join(', ')}</div>

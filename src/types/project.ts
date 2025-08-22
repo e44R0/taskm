@@ -1,5 +1,3 @@
-import { Area } from './area';
-
 export interface Project {
   id: string;
   title: string;
@@ -7,6 +5,6 @@ export interface Project {
   userId: string;
   isFavorite: boolean;
   createdAt: string;
-  areas: Area[];
+  // areas: Area[];
   username: string;
 }

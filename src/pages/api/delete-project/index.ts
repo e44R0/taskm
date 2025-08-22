@@ -1,10 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Task } from '@/types/task';
-import {deleteProject} from '@/db/task-service';
+import { deleteProject } from '@/db/task-service';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Task | { message: string }>
+  res: NextApiResponse<{ message: string }>
 ) {
   if (req.method === 'POST') {
     const projectId = req.body.projectId;
@@ -18,9 +17,7 @@ export default async function handler(
 
     try {
       deleteProject(projectId);
-      return res
-        .status(200)
-        .json({ message: 'Проект была удален' });
+      return res.status(200).json({ message: 'Проект была удален' });
     } catch {
       return res.status(500).json({ message: 'Ошибка при сохранении данных' });
     }

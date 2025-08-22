@@ -1,11 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Task } from '@/types/task';
+import { DTO } from '@/types/transfer';
 import { randomUUID } from 'crypto';
 import { addNewTask } from '@/db/task-service';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Task | { message: string }>
+  res: NextApiResponse<DTO.Task | { message: string }>
 ) {
   if (req.method === 'POST') {
     console.log('Запрошен проект дял добавления задачи: ', req.body);

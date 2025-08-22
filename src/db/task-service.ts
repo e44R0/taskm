@@ -1,11 +1,8 @@
 import db from './init-db.mjs';
-// import { Task } from '@/types/task'
-import { User } from '@/types/users';
-import { Project } from '@/types/project';
-import { Area } from '@/types/area';
-import { Task } from '@/types/task';
+import { BE } from '@/types/backend';
+import { DTO } from '@/types/transfer';
 
-export function createUser(user: User) {
+export function createUser(user: BE.User) {
   const stmt = db.prepare(`
     INSERT INTO users (id, username, email, password, created_at)
     VALUES (?, ?, ?, ?, ?)
@@ -14,17 +11,17 @@ export function createUser(user: User) {
 }
 
 export function getUserById(userId: string) {
-  return db.prepare('SELECT * FROM users WHERE id = ?').get(userId);
+  return db.prepare('SELECT * FROM users WHERE id = ?').get(userId) as BE.User;
 }
 
-export function getProjectsWithTags(user_id): Project[] {
+export function getProjectsWithTags(userId: string): BE.Project[] {
   const stmt = db.prepare(`
       SELECT
           p.id,
           p.title,
-          p.user_id,
+          p.user_id as userId,
           GROUP_CONCAT(t.tag_name, ',') AS tags,
-          p.is_favorite,
+          p.is_favorite as isFavorite,
           p.created_at as createdAt,
           u.username
       FROM projects p
@@ -34,20 +31,21 @@ export function getProjectsWithTags(user_id): Project[] {
       WHERE p.user_id = ?
       GROUP BY p.id
   `);
-  const result = stmt.all(user_id);
-  console.log('result:', result);
+  const result = stmt.all(userId);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return result.map((project: any) => {
     return { ...project, tags: project?.tags?.split(',') ?? [] };
-  }) as Project[];
+  }) as BE.Project[];
 }
 
-export function getProjectsById(id: string, userId: string): Project {
+export function getProjectsById(id: string, userId: string): BE.Project {
   const stmt = db.prepare(`
-    SELECT p.id, p.title, p.user_id,
+    SELECT p.id, 
+           p.title,
+           p.user_id as userId,
            GROUP_CONCAT(pt.tag_id, ', ') AS tags,
-           p.is_favorite,
+           p.is_favorite as isFavorite,
            p.created_at as createdAt,
            u.username
     FROM projects p
@@ -58,11 +56,11 @@ export function getProjectsById(id: string, userId: string): Project {
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const result = stmt.get(id, userId) as any;
-  console.log('result:', result);
+
   return {
     ...result,
     tags: result?.tags?.split(', ') ?? [],
-  } as Project;
+  } as BE.Project;
 }
 
 export function getAreasByProjectId(projectId: string) {
@@ -70,7 +68,7 @@ export function getAreasByProjectId(projectId: string) {
     SELECT * FROM areas WHERE project_id = ?
   `);
   const result = stmt.all(projectId);
-  return result as Area[];
+  return result as BE.Area[];
 }
 
 export function getTasksByProjectId(projectId: string) {
@@ -81,11 +79,11 @@ export function getTasksByProjectId(projectId: string) {
     WHERE a.project_id = ?
   `);
   const result = stmt.all(projectId);
-  return result as Task[];
+  return result as BE.Task[];
 }
 
 export function getProjectDataByProjectId(projectId: string, userId: string) {
-  const project = getProjectsById(projectId, userId);
+  const project = getProjectsById(projectId, userId) as BE.ProjectWithAreas;
   if (project.id === null) {
     return null;
   }
@@ -106,7 +104,7 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
     `);
   const records = stmt.all(projectId);
 
-  const areasMap = new Map<string, Area>();
+  const areasMap = new Map<string, BE.Area>();
 
   records.forEach((record: any) => {
     if (areasMap.has(record.area_id)) {
@@ -136,12 +134,16 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
     }
   });
 
-  project.areas = [...areasMap.values()] as Area[];
+  project.areas = [...areasMap.values()] as BE.Area[];
 
   return project;
 }
 
-export function addNewTask(project_id: string, area_id: string, task: Task) {
+export function addNewTask(
+  project_id: string,
+  area_id: string,
+  task: DTO.Task
+) {
   const stmt =
     db.prepare(`INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id)
     VALUES (?, ?, ?, ?, ?, ?)
@@ -156,7 +158,7 @@ export function addNewTask(project_id: string, area_id: string, task: Task) {
   );
 }
 
-export function updateTask(task: Task) {
+export function updateTask(task: DTO.Task) {
   const stmt = db.prepare(`UPDATE tasks
       SET
         text = ?,
@@ -181,7 +183,7 @@ export function addNewArea(
   stmt.run(area.title, projectId, area.id);
 }
 
-export function addNewProject(data: Project) {
+export function addNewProject(data: DTO.Project) {
   db.transaction(() => {
     db.prepare(
       `INSERT INTO projects (id, title, user_id, is_favorite, created_at)
@@ -235,8 +237,6 @@ export function addNewProject(data: Project) {
       const placeholders = tagIds.map(() => '(?, ?)').join(',');
       const flatValues = tagIds.flatMap((tagId) => [data.id, tagId]);
 
-      console.log('placeholders ->>>', flatValues);
-
       db.prepare(
         `INSERT INTO project_tags (project_id, tag_id) VALUES ${placeholders}`
       ).run(...flatValues);
@@ -249,7 +249,7 @@ export function deleteProject(projectId: string) {
   stmt.run(projectId);
 }
 
-export function updateProject(data) {
+export function updateProject(data: DTO.Project) {
   db.transaction(() => {
     db.prepare(
       `UPDATE projects 
@@ -268,10 +268,10 @@ export function updateProject(data) {
         throw new Error('Проект не найден');
       }
 
-      data.tags.forEach((tagName:string) => {
+      data.tags.forEach((tagName: string) => {
         let { id: tagId } = (db
           .prepare(`SELECT id FROM tags WHERE user_id = ? AND tag_name = ?`)
-          .get(userId, tagName) as { id: string }) || { id : '' }               //ИСПРАВИТЬ!!!
+          .get(userId, tagName) as { id: string }) || { id: '' }; //ИСПРАВИТЬ!!!
 
         if (!tagId) {
           tagId = crypto.randomUUID();

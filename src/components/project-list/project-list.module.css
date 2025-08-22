@@ -1,9 +1,10 @@
 .projectList {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 10px;
-  height: 200px;
-  /* justify-content: space-between; */
-  /* flex-grow: 1; */
+    display: grid;
+    /*grid-template-columns: repeat(auto-fill, minmax(min(350px, 100%), 1fr));*/
+    grid-template-columns: repeat(auto-fill, minmax(min(410px, 450px), 1fr));
+    /*grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));*/
+    gap: 20px;
+    align-content: start;
+    padding: 20px;
+    flex-grow: 1;
 }
