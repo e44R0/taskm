@@ -1,15 +1,17 @@
 import Database from 'better-sqlite3';
 import { resolve } from 'path';
 import dotenv from 'dotenv';
+import { v4 as uuidv4 } from 'uuid';
 
 dotenv.config();
 
 const dbPath = resolve(process.env.DB_PATH);
-const db = new Database(dbPath);
 
-// function generateId(prefix) {
-//   return `${prefix}_${Math.random().toString(36).substr(2, 5)}`;
-// }
+console.log('ENV', process.env);
+console.log('dbPath ->> ', dbPath);
+
+const db = new Database(dbPath);
+db.pragma('foreign_keys = ON');
 
 function getRandomDate() {
   const start = new Date(2023, 0, 1);
@@ -19,267 +21,167 @@ function getRandomDate() {
   ).toISOString();
 }
 
-db.exec(`
-  DELETE FROM user_sessions;
-  DELETE FROM project_users;
-  DELETE FROM project_tags;
-  DELETE FROM task_tags;
-  DELETE FROM tasks;
-  DELETE FROM areas;
-  DELETE FROM projects;
-  DELETE FROM users;
+// Чистим все таблицы
+const tables = [
+  'user_sessions',
+  'project_users',
+  'project_tags',
+  'task_tags',
+  'tasks',
+  'areas',
+  'projects',
+  'tags',
+  'users',
+  'roles',
+];
+tables.forEach((table) => db.exec(`DELETE FROM ${table};`));
+
+// Добавляем роли
+const roles = [
+  { id: '1', name: 'SUPER_USER' },
+  { id: '2', name: 'OWNER' },
+  { id: '3', name: 'MODERATOR' },
+  { id: '4', name: 'MEMBER' },
+  { id: '5', name: 'VIEWER' },
+];
+const insertRole = db.prepare(
+  'INSERT INTO roles (id, role_name) VALUES (?, ?)'
+);
+roles.forEach((r) => insertRole.run(r.id, r.name));
+
+// Пользователи
+const users = [
+  { username: 'admin', email: 'admin@example.com', is_superuser: 1 },
+  { username: 'alice', email: 'alice@example.com', is_superuser: 0 },
+  { username: 'bob', email: 'bob@example.com', is_superuser: 0 },
+  { username: 'charlie', email: 'charlie@example.com', is_superuser: 0 },
+  { username: 'diana', email: 'diana@example.com', is_superuser: 0 },
+];
+
+const userIds = {};
+const insertUser = db.prepare(`
+  INSERT INTO users (id, username, email, password, created_at, is_superuser)
+  VALUES (?, ?, ?, ?, ?, ?)
+`);
+users.forEach((u) => {
+  const id = uuidv4();
+  userIds[u.username] = id;
+  insertUser.run(
+    id,
+    u.username,
+    u.email,
+    '123',
+    getRandomDate(),
+    u.is_superuser
+  );
+});
+
+// Statements
+const insertProject = db.prepare(`
+  INSERT INTO projects (id, title, user_id, is_favorite, created_at)
+  VALUES (?, ?, ?, ?, ?)
 `);
 
-// Insert mock users
-const users = [
-  {
-    id: 'user_1',
-    username: 'john_doe',
-    email: 'john@example.com',
-    password: '123',
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'user_2',
-    username: 'jane_smith',
-    email: 'jane@example.com',
-    password: '123',
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'user_3',
-    username: 'mike_johnson',
-    email: 'mike@example.com',
-    password: '123',
-    created_at: getRandomDate(),
-  },
-];
+const insertArea = db.prepare(`
+  INSERT INTO areas (id, title, project_id)
+  VALUES (?, ?, ?)
+`);
 
-const insertUser = db.prepare(
-  'INSERT INTO users (id, username, email, password, created_at) VALUES (?, ?, ?, ?, ?)'
-);
-users.forEach((user) =>
-  insertUser.run(
-    user.id,
-    user.username,
-    user.email,
-    user.password,
-    user.created_at
-  )
-);
+const insertProjectUser = db.prepare(`
+  INSERT INTO project_users (project_id, user_id, role_id)
+  VALUES (?, ?, ?)
+`);
 
-// Insert mock projects
-const projects = [
-  {
-    id: 'project_1',
-    title: 'Company Website',
-    user_id: 'user_1',
-    is_favorite: 1,
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'project_2',
-    title: 'Mobile App',
-    user_id: 'user_2',
-    is_favorite: 0,
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'project_3',
-    title: 'Internal Dashboard',
-    user_id: 'user_1',
-    is_favorite: 1,
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'project_4',
-    title: 'Marketing Campaign',
-    user_id: 'user_3',
-    is_favorite: 0,
-    created_at: getRandomDate(),
-  },
-];
+const insertTask = db.prepare(`
+  INSERT INTO tasks (task_id, text, task_owner, created_at, area_id)
+  VALUES (?, ?, ?, ?, ?)
+`);
 
-const insertProject = db.prepare(
-  'INSERT INTO projects (id, title, user_id, is_favorite, created_at) VALUES (?, ?, ?, ?, ?)'
-);
-projects.forEach((project) =>
-  insertProject.run(
-    project.id,
-    project.title,
-    project.user_id,
-    project.is_favorite,
-    project.created_at
-  )
-);
+const insertTag = db.prepare(`
+  INSERT INTO tags (id, user_id, tag_name)
+  VALUES (?, ?, ?)
+`);
 
-// Insert project members
-const projectUsers = [
-  { project_id: 'project_1', user_id: 'user_1', role: 'owner' },
-  { project_id: 'project_1', user_id: 'user_2', role: 'member' },
-  { project_id: 'project_2', user_id: 'user_2', role: 'owner' },
-  { project_id: 'project_2', user_id: 'user_3', role: 'member' },
-  { project_id: 'project_3', user_id: 'user_1', role: 'owner' },
-  { project_id: 'project_3', user_id: 'user_3', role: 'admin' },
-  { project_id: 'project_4', user_id: 'user_3', role: 'owner' },
-];
+const insertProjectTag = db.prepare(`
+  INSERT INTO project_tags (project_id, tag_id)
+  VALUES (?, ?)
+`);
 
-const insertProjectUser = db.prepare(
-  'INSERT INTO project_users (project_id, user_id, role) VALUES (?, ?, ?)'
-);
-projectUsers.forEach((pu) =>
-  insertProjectUser.run(pu.project_id, pu.user_id, pu.role)
-);
+const insertTaskTag = db.prepare(`
+  INSERT INTO task_tags (task_id, tag_id)
+  VALUES (?, ?)
+`);
 
-// Insert project tags
-const projectTags = [
-  { project_id: 'project_1', tag: 'web' },
-  { project_id: 'project_1', tag: 'design' },
-  { project_id: 'project_2', tag: 'mobile' },
-  { project_id: 'project_2', tag: 'development' },
-  { project_id: 'project_3', tag: 'internal' },
-  { project_id: 'project_4', tag: 'marketing' },
-];
+const insertSession = db.prepare(`
+  INSERT INTO user_sessions (id, user_id, created_at)
+  VALUES (?, ?, ?)
+`);
 
-const insertProjectTag = db.prepare(
-  'INSERT INTO project_tags (project_id, tag) VALUES (?, ?)'
-);
-projectTags.forEach((pt) => insertProjectTag.run(pt.project_id, pt.tag));
+Object.entries(userIds).forEach(([username, userId]) => {
+  const projectCount = Math.floor(Math.random() * 6) + 1; // от 1 до 6 проектов
 
-// Insert project areas
-const areas = [
-  { id: 'area_1', title: 'Frontend', project_id: 'project_1' },
-  { id: 'area_2', title: 'Backend', project_id: 'project_1' },
-  { id: 'area_3', title: 'Design', project_id: 'project_1' },
-  { id: 'area_4', title: 'iOS', project_id: 'project_2' },
-  { id: 'area_5', title: 'Android', project_id: 'project_2' },
-  { id: 'area_6', title: 'API', project_id: 'project_3' },
-  { id: 'area_7', title: 'Database', project_id: 'project_3' },
-  { id: 'area_8', title: 'Content', project_id: 'project_4' },
-];
+  for (let i = 1; i <= projectCount; i++) {
+    const projectId = uuidv4();
+    insertProject.run(
+      projectId,
+      `${username}'s Project ${i}`,
+      userId,
+      i === 1 ? 1 : 0,
+      getRandomDate()
+    );
+    insertProjectUser.run(projectId, userId, '2'); // OWNER
 
-const insertArea = db.prepare(
-  'INSERT INTO areas (id, title, project_id) VALUES (?, ?, ?)'
-);
-areas.forEach((area) => insertArea.run(area.id, area.title, area.project_id));
+    const otherUsers = Object.values(userIds).filter((id) => id !== userId);
+    const shuffled = otherUsers.sort(() => Math.random() - 0.5).slice(0, 2);
+    shuffled.forEach((memberId, idx) => {
+      const role = idx === 0 ? '3' : '4'; // MODERATOR или MEMBER
+      insertProjectUser.run(projectId, memberId, role);
+    });
 
-// Insert tasks
-const tasks = [
-  {
-    task_id: 'task_1',
-    text: 'Create homepage layout',
-    task_owner: 'user_1',
-    created_at: getRandomDate(),
-    project_id: 'project_1',
-    area_id: 'area_1',
-  },
-  {
-    task_id: 'task_2',
-    text: 'Implement auth API',
-    task_owner: 'user_2',
-    created_at: getRandomDate(),
-    project_id: 'project_1',
-    area_id: 'area_2',
-  },
-  {
-    task_id: 'task_3',
-    text: 'Design logo',
-    task_owner: 'user_3',
-    created_at: getRandomDate(),
-    project_id: 'project_1',
-    area_id: 'area_3',
-  },
-  {
-    task_id: 'task_4',
-    text: 'Develop login screen',
-    task_owner: 'user_2',
-    created_at: getRandomDate(),
-    project_id: 'project_2',
-    area_id: 'area_4',
-  },
-  {
-    task_id: 'task_5',
-    text: 'Integrate payments',
-    task_owner: 'user_3',
-    created_at: getRandomDate(),
-    project_id: 'project_2',
-    area_id: 'area_5',
-  },
-  {
-    task_id: 'task_6',
-    text: 'Optimize DB queries',
-    task_owner: 'user_1',
-    created_at: getRandomDate(),
-    project_id: 'project_3',
-    area_id: 'area_7',
-  },
-  {
-    task_id: 'task_7',
-    text: 'Create content plan',
-    task_owner: 'user_3',
-    created_at: getRandomDate(),
-    project_id: 'project_4',
-    area_id: 'area_8',
-  },
-];
+    const areaCount = Math.floor(Math.random() * 3) + 1;
+    const areaIds = [];
+    for (let a = 1; a <= areaCount; a++) {
+      const areaId = uuidv4();
+      areaIds.push(areaId);
+      insertArea.run(
+        areaId,
+        `Area ${a} of ${username}'s Project ${i}`,
+        projectId
+      );
 
-const insertTask = db.prepare(
-  'INSERT INTO tasks (task_id, text, task_owner, created_at, project_id, area_id) VALUES (?, ?, ?, ?, ?, ?)'
-);
-tasks.forEach((task) =>
-  insertTask.run(
-    task.task_id,
-    task.text,
-    task.task_owner,
-    task.created_at,
-    task.project_id,
-    task.area_id
-  )
-);
+      const taskCount = Math.floor(Math.random() * 3) + 1;
+      for (let t = 1; t <= taskCount; t++) {
+        const taskId = uuidv4();
+        insertTask.run(
+          taskId,
+          `Task ${t} in Area ${a}`,
+          userId,
+          getRandomDate(),
+          areaId
+        );
 
-// Insert task tags
-const taskTags = [
-  { task_id: 'task_1', tag: 'urgent' },
-  { task_id: 'task_1', tag: 'important' },
-  { task_id: 'task_2', tag: 'development' },
-  { task_id: 'task_3', tag: 'design' },
-  { task_id: 'task_4', tag: 'mobile' },
-  { task_id: 'task_5', tag: 'integration' },
-  { task_id: 'task_6', tag: 'optimization' },
-  { task_id: 'task_7', tag: 'content' },
-];
+        if (Math.random() > 0.5) {
+          const tagId = uuidv4();
+          console.log('Таска -> ', `${username}_tag_${t}`);
+          insertTag.run(tagId, userId, `${username}_tag_${t}`);
+          insertTaskTag.run(taskId, tagId);
+        }
+      }
+    }
 
-const insertTaskTag = db.prepare(
-  'INSERT INTO task_tags (task_id, tag) VALUES (?, ?)'
-);
-taskTags.forEach((tt) => insertTaskTag.run(tt.task_id, tt.tag));
+    if (Math.random() > 0.5) {
+      const tagId = uuidv4();
+      insertTag.run(tagId, userId, `${username}_project_tag_${i}`);
+      insertProjectTag.run(projectId, tagId);
+    }
+  }
+});
 
-// Insert user sessions
-const userSessions = [
-  {
-    id: 'session_1',
-    user_id: 'user_1',
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'session_2',
-    user_id: 'user_2',
-    created_at: getRandomDate(),
-  },
-  {
-    id: 'session_3',
-    user_id: 'user_3',
-    created_at: getRandomDate(),
-  },
-];
+Object.values(userIds).forEach((userId) => {
+  if (Math.random() > 0.3) {
+    insertSession.run(uuidv4(), userId, getRandomDate());
+  }
+});
 
-const insertUserSession = db.prepare(
-  'INSERT INTO user_sessions (id, user_id, created_at) VALUES (?, ?, ?)'
-);
-userSessions.forEach((us) =>
-  insertUserSession.run(us.id, us.user_id, us.created_at)
-);
-
-console.log('Database successfully populated with mock data.');
-
+console.log('Database successfully populated with full mock data.');
 export default db;
