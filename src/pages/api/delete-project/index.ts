@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { deleteProject } from '@/db/task-service';
+import { deleteProject } from '@/db/project-service';
 
 export default async function handler(
   req: NextApiRequest,

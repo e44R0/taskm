@@ -1,7 +1,9 @@
 import { Project } from '@/types/project';
-import styles from './new-card.module.css';
+// import styles from './new-card.module.css';
 import { useState } from 'react';
 import { createProject } from '@/api/create-project';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 type NewCardProps = {
   onProjectCreated: (project: Project) => void;
@@ -28,41 +30,44 @@ export const NewCard = (props: NewCardProps) => {
   };
 
   return (
-      <div className={`${styles.newCard} flex flex-col`}>
-          <div>
-              <label htmlFor="title">Title:</label>
-              <input
-                  name="title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  className="w-full border border-[#1c1c1c] rounded p-1"
-              />
-          </div>
-          <div className="mt-2">
-              <label htmlFor="tags">Tags:</label>
-              <input
-                  name="tags"
-                  value={tags.join(',')}
-                  onChange={(e) => setTags(e.target.value.split(','))}
-                  className="w-full border border-[#1c1c1c] rounded p-1"
-              />
-          </div>
-
-          {/* Кнопки прижаты к низу благодаря mt-auto */}
-          <div className="mt-auto flex justify-between">
-              <button
-                  className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a] rounded"
-                  onClick={cancelNewProjectHandler}
-              >
-                  Cancel
-              </button>
-              <button
-                  className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a] rounded"
-                  onClick={createNewProjectHandler}
-              >
-                  Create
-              </button>
-          </div>
+    <Card className={`rounded-md group p-3 border-[#2a2a2a]`}>
+      <div>
+        <label htmlFor="title">Title:</label>
+        <input
+          name="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="w-full  border border-[#1c1c1c] rounded"
+        />
       </div>
+      <div>
+        <label htmlFor="tags">Tags:</label>
+        <input
+          name="tags"
+          value={tags.join(',')}
+          onChange={(e) => setTags(e.target.value.split(','))}
+          className="w-full border border-[#1c1c1c] rounded"
+        />
+      </div>
+
+      <div className="flex justify-end gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={cancelNewProjectHandler}
+          className="bg-zinc-800/50 border-zinc-700 hover:bg-zinc-700/50 text-zinc-200 text-xs px-2"
+        >
+          Cancel
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={createNewProjectHandler}
+          className="bg-zinc-800/50 border-zinc-700 hover:bg-zinc-700/50 text-zinc-200 text-xs px-2"
+        >
+          Create
+        </Button>
+      </div>
+    </Card>
   );
 };

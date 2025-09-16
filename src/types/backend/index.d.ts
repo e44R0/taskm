@@ -40,4 +40,6 @@ export namespace BE {
   }
 
   export type ProjectWithAreas = Project & { areas: Area[] };
+
+  type Role = 'OWNER' | 'MODERATOR' | 'MEMBER' | 'VIEWER';
 }

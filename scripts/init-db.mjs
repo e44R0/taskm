@@ -17,6 +17,8 @@ const db = new Database(dbPath, {
   // verbose: console.log,
 });
 
+//даление файла дб
+
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
                                          id TEXT PRIMARY KEY,

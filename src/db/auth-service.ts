@@ -1,5 +1,5 @@
 import { BE } from '@/types/backend';
-import db from './init-db.mjs';
+import db from '../../scripts/init-db.mjs';
 
 //export function getUserByName(name: string) {
 //  return db.prepare('SELECT * FROM users WHERE username = ?').get(name) as User;
