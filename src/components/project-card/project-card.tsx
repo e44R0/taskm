@@ -26,6 +26,7 @@ export const ProjectCard = (props: CardProps) => {
   const [initialTitle, setInitialTitle] = useState(title);
   const [initialTags, setInitialTags] = useState(tags);
   const [initialFavorite, setIsFavorite] = useState(isFavorite);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const removeTagHandler = (tagToRemove: string) => {
     setInitialTags(initialTags.filter((tag) => tag !== tagToRemove));
@@ -59,19 +60,34 @@ export const ProjectCard = (props: CardProps) => {
       title: initialTitle,
       tags: initialTags,
       username,
-      isFavorite: isFavorite,
+      isFavorite,
       createdAt,
     };
 
     try {
-      // setErrorMessage(null);
-      updateProject(projectData).then((data) => {
-        setEditMode(!isEditMode);
-        console.log('data: ', data);
-      });
-    } catch (error) {
-      // setErrorMessage((error as Error).message)
-      console.error((error as Error).message);
+      setErrorMessage('');
+      const data = await updateProject(projectData);
+
+      setEditMode(!isEditMode);
+      console.log('data: ', data);
+    } catch (error: unknown) {
+      if (typeof error === 'object' && error !== null && 'response' in error) {
+        const errorWithResponse = error as { response?: { status?: number } };
+
+        if (errorWithResponse.response?.status === 403) {
+          console.log('API error: Forbidden — 403: Недостаточно прав');
+          setErrorMessage('Недостаточно прав для сохранения изменений');
+          return;
+        }
+      }
+
+      if (error instanceof Error) {
+        setErrorMessage(error.message);
+        console.error(error.message);
+      } else {
+        setErrorMessage('Произошла неизвестная ошибка');
+        console.error(errorMessage);
+      }
     }
   };
 
@@ -122,10 +138,7 @@ export const ProjectCard = (props: CardProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={`https://cdn-icons-png.flaticon.com/512/126/126486.png}`}
-                alt={username}
-              />
+              <AvatarImage src="/avatar.svg" alt={username} />
               <AvatarFallback className="text-xs bg-gradient-to-br from-zinc-600 to-zinc-800 text-zinc-200 font-medium border border-zinc-700">
                 {/*{getInitials(owner.name)}*/}
               </AvatarFallback>
@@ -208,10 +221,7 @@ export const ProjectCard = (props: CardProps) => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage
-                src={`https://cdn-icons-png.flaticon.com/512/126/126486.png}`}
-                alt={username}
-              />
+              <AvatarImage src="/avatar.svg" alt={username} />
               <AvatarFallback className="text-xs bg-gradient-to-br from-zinc-600 to-zinc-800 text-zinc-200 font-medium border border-zinc-700">
                 {/*{getInitials(owner.name)}*/}
               </AvatarFallback>

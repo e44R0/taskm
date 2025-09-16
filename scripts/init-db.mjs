@@ -1,17 +1,23 @@
+// init-db.mjs
 import Database from 'better-sqlite3';
 import { resolve } from 'path';
-// import dotenv from 'dotenv';
-import 'dotenv/config';
+import dotenv from 'dotenv';
 
+// Загружаем .env явно
+dotenv.config({ path: resolve('.env') });
+
+// Проверка переменной
 if (!process.env.DB_PATH) {
   throw new Error('DB_PATH не определена в .env файле!');
 }
-
+console.log('DB_PATH=', process.env.DB_PATH);
 const dbPath = resolve(process.env.DB_PATH);
 
 const db = new Database(dbPath, {
   // verbose: console.log,
 });
+
+//даление файла дб
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS users (
@@ -19,7 +25,13 @@ db.exec(`
                                          username TEXT NOT NULL,
                                          email TEXT NOT NULL UNIQUE,
                                          password TEXT NOT NULL,
-                                         created_at TEXT NOT NULL
+                                         created_at TEXT NOT NULL,
+                                         is_superuser BOOLEAN DEFAULT 0
+    );
+
+    CREATE TABLE IF NOT EXISTS roles (
+                                         id TEXT PRIMARY KEY,
+                                         role_name TEXT NOT NULL UNIQUE
     );
 
     CREATE TABLE IF NOT EXISTS projects (
@@ -29,6 +41,16 @@ db.exec(`
                                             is_favorite BOOLEAN DEFAULT 0,
                                             created_at TEXT NOT NULL,
                                             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+
+    CREATE TABLE IF NOT EXISTS project_users (
+                                                project_id TEXT NOT NULL,
+                                                user_id TEXT NOT NULL,
+                                                role_id TEXT NOT NULL,
+                                                FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+                                                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+                                                FOREIGN KEY (role_id) REFERENCES roles(id),
+                                                PRIMARY KEY (project_id, user_id)
     );
 
     CREATE TABLE IF NOT EXISTS areas (
@@ -43,20 +65,13 @@ db.exec(`
                                          text TEXT NOT NULL,
                                          task_owner TEXT NOT NULL,
                                          created_at TEXT NOT NULL,
-                                         project_id TEXT NOT NULL,
-                                         area_id TEXT,
-                                         FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
+                                         area_id TEXT NOT NULL,
                                          FOREIGN KEY (area_id) REFERENCES areas(id) ON DELETE CASCADE
     );
 
-    CREATE TABLE IF NOT EXISTS project_users (
-                                                 project_id TEXT NOT NULL,
-                                                 user_id TEXT NOT NULL,
-                                                 role TEXT NOT NULL,
-                                                 FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-                                                 FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-                                                 PRIMARY KEY (project_id, user_id)
-    );
+    
+
+
 
     CREATE TABLE IF NOT EXISTS user_sessions (
                                                  id TEXT PRIMARY KEY,
@@ -82,11 +97,11 @@ db.exec(`
     );
 
     CREATE TABLE IF NOT EXISTS task_tags (
-                                              task_id TEXT NOT NULL,
-                                              tag_id TEXT NOT NULL,
-                                              FOREIGN KEY (task_id) REFERENCES tasks(task_id) ON DELETE CASCADE,
-                                              FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
-                                              PRIMARY KEY (task_id, tag_id)
+                                            task_id TEXT NOT NULL,
+                                            tag_id TEXT NOT NULL,
+                                            FOREIGN KEY (task_id) REFERENCES tasks(task_id) ON DELETE CASCADE,
+                                            FOREIGN KEY (tag_id) REFERENCES tags(id) ON DELETE CASCADE,
+                                            PRIMARY KEY (task_id, tag_id)
     );
 
 `);

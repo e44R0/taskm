@@ -7,7 +7,7 @@ import router from 'next/router';
 import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+// import { Separator } from '@/components/ui/separator';
 import {
   ChevronLeft,
   ChevronRight,
@@ -48,11 +48,10 @@ export const Navigation = () => {
           <Avatar
             className={`${isCollapsed ? 'h-8 w-8' : 'h-16 w-16'} transition-all duration-300`}
           >
-            <AvatarImage
-              src="/placeholder.svg?height=64&width=64"
-              alt="User Avatar"
-            />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarImage src="" alt="User Avatar" />
+            <AvatarFallback className={'text-gray-400'}>
+              {auth.userData?.username[0].toUpperCase()}
+            </AvatarFallback>
           </Avatar>
           {!isCollapsed && (
             <div className="text-center">

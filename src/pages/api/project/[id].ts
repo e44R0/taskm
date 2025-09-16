@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Project } from '@/types/project';
-import { getProjectDataByProjectId } from '@/db/task-service';
+import { getProjectDataByProjectId } from '@/db/project-service';
 import { authCheck } from '@/utils/utils';
 
 export default function handler(

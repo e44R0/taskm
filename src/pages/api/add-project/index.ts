@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
 import { authCheck } from '@/utils/utils';
 import { Project } from '@/types/project';
-import { addNewProject } from '@/db/task-service';
+import { addNewProject } from '@/db/project-service';
 
 export default async function handler(
   req: NextApiRequest,
