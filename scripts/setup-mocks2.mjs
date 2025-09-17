@@ -106,8 +106,8 @@ users.forEach((u) => {
 
 // Statements
 const insertProject = db.prepare(`
-  INSERT INTO projects (id, title, user_id, is_favorite, created_at)
-  VALUES (?, ?, ?, ?, ?)
+  INSERT INTO projects (id, title, user_id, created_at)
+  VALUES (?, ?, ?, ?)
 `);
 
 const insertArea = db.prepare(`
@@ -182,7 +182,6 @@ projects.forEach((project) => {
     project.id,
     project.title,
     project.userId,
-    project.isFavorite,
     project.createdAt
   );
 

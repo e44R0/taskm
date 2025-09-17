@@ -10,6 +10,7 @@ import { Calendar, Edit, Save, Trash2, X } from 'lucide-react';
 import router from 'next/router';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
+import { toggleProjectFavorite } from '@/api/toggle-project-favorite';
 
 interface CardProps {
   project: Project;
@@ -50,7 +51,13 @@ export const ProjectCard = (props: CardProps) => {
     }
   };
 
-  const toggleFavorite = () => {
+  const toggleFavorite = async () => {
+    try {
+      await toggleProjectFavorite(id);
+    } catch (e) {
+      console.error((e as Error).message);
+    }
+
     setIsFavorite(!initialFavorite);
   };
 

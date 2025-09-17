@@ -14,9 +14,9 @@ export function getProjectsWithTags(userId: string): BE.Project[] {
       p.id,
       p.title,
       p.user_id as userId,
-      p.is_favorite as isFavorite,
       p.created_at as createdAt,
-      r.role_name,
+      fp.is_favorite as isFavorite,
+      r.role_name as roleName,
       u.username,
       GROUP_CONCAT(t.tag_name, ', ') AS tags
     FROM projects p
@@ -25,10 +25,11 @@ export function getProjectsWithTags(userId: string): BE.Project[] {
            LEFT JOIN project_tags pt ON p.id = pt.project_id
            LEFT JOIN tags t ON pt.tag_id = t.id
            LEFT JOIN users u ON u.id = p.user_id
+           LEFT JOIN favorite_projects fp ON p.id = fp.project_id AND fp.user_id = ?
     WHERE pu.user_id = ?
-    GROUP BY p.id, p.title, p.is_favorite, p.created_at, r.role_name;
+    GROUP BY p.id, p.title, p.created_at, r.role_name;
   `);
-  const result = stmt.all(userId);
+  const result = stmt.all(userId, userId);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return result.map((project: any) => {
@@ -42,9 +43,9 @@ export function getProjectsById(id: string, userId: string): BE.Project {
       p.id,
       p.title,
       p.user_id as userId,
-      p.is_favorite as isFavorite,
       p.created_at as createdAt,
-      r.role_name,
+      fp.is_favorite as isFavorite,
+      r.role_name as roleName,
       u.username,
       GROUP_CONCAT(t.tag_name, ', ') AS tags
     FROM projects p
@@ -53,12 +54,13 @@ export function getProjectsById(id: string, userId: string): BE.Project {
            LEFT JOIN project_tags pt ON p.id = pt.project_id
            LEFT JOIN tags t ON pt.tag_id = t.id
            LEFT JOIN users u ON u.id = p.user_id
+           LEFT JOIN favorite_projects fp ON p.id = fp.project_id AND fp.user_id = ?
     WHERE p.id = ? AND pu.user_id = ?
-    GROUP BY p.id, p.title, p.is_favorite, p.created_at, r.role_name;
+    GROUP BY p.id, p.title, p.created_at, r.role_name;
   `);
 
   /* eslint-disable @typescript-eslint/no-explicit-any */
-  const result = stmt.get(id, userId) as any;
+  const result = stmt.get(userId, id, userId) as any;
 
   return {
     ...result,
@@ -126,9 +128,14 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
 export function addNewProject(data: DTO.Project) {
   db.transaction(() => {
     db.prepare(
-      `INSERT INTO projects (id, title, user_id, is_favorite, created_at)
-       VALUES (?, ?, ?, ?, datetime('now', 'localtime'))`
-    ).run(data.id, data.title, data.userId, data.isFavorite ? 1 : 0);
+      `INSERT INTO projects (id, title, user_id, created_at)
+       VALUES (?, ?, ?, datetime('now', 'localtime'))`
+    ).run(data.id, data.title, data.userId);
+
+    db.prepare(
+      `INSERT INTO project_users (project_id, user_id, role_id)
+       VALUES (?, ?, ?)`
+    ).run(data.id, data.userId, '1');
 
     if (data.tags?.length) {
       const userTags =
@@ -200,9 +207,10 @@ export function updateProject(data: DTO.Project, userId: string) {
   db.transaction(() => {
     db.prepare(
       `UPDATE projects 
-       SET title = ?, is_favorite = ? 
+       SET title = ?
+--           is_favorite = ? 
        WHERE id = ?`
-    ).run(data.title, data.isFavorite ? 1 : 0, data.id);
+    ).run(data.title, data.id);
 
     db.prepare(`DELETE FROM project_tags WHERE project_id = ?`).run(data.id);
 
@@ -233,4 +241,29 @@ export function updateProject(data: DTO.Project, userId: string) {
       });
     }
   })();
+}
+
+export function toggleProjectFavorite(projectId: string, userId: string) {
+  const existingRecord = db
+    .prepare(
+      `
+    SELECT is_favorite as isFavorite FROM favorite_projects
+    WHERE user_id = ? AND project_id = ?`
+    )
+    .get(userId, projectId) as { isFavorite: number } | undefined;
+
+  if (existingRecord) {
+    const newStatus = existingRecord.isFavorite !== 1;
+    db.prepare(
+      `UPDATE favorite_projects SET is_favorite = ?
+       WHERE user_id = ? AND project_id = ?`
+    ).run(newStatus ? 1 : 0, userId, projectId);
+  } else {
+    db.prepare(
+      `INSERT INTO favorite_projects (user_id, project_id, is_favorite)
+       VALUES (?, ?, ?)`
+    ).run(userId, projectId, 1);
+  }
+
+  return getProjectsById(projectId, userId);
 }
