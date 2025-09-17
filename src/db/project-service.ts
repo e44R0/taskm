@@ -208,7 +208,6 @@ export function updateProject(data: DTO.Project, userId: string) {
     db.prepare(
       `UPDATE projects 
        SET title = ?
---           is_favorite = ? 
        WHERE id = ?`
     ).run(data.title, data.id);
 
