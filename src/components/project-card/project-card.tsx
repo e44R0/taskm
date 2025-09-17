@@ -2,7 +2,7 @@ import { Project } from '@/types/project';
 import styles from './card.module.css';
 import { formatDate } from '../utils';
 import { deleteProject } from '@/api/delete-project';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { updateProject } from '@/api/update-project';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -33,13 +33,12 @@ export const ProjectCard = (props: CardProps) => {
     setInitialTags(initialTags.filter((tag) => tag !== tagToRemove));
   };
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    // Если клик был по интерактивному элементу - не переходить
+  const handleCardClick = async (e: React.MouseEvent) => {
     const interactiveElements = ['BUTTON', 'A', 'INPUT', 'TEXTAREA', 'SPAN'];
     if (interactiveElements.includes((e.target as HTMLElement).tagName)) {
       return;
     }
-    router.push(`/projects/${id}`);
+    await router.push(`/projects/${id}`);
   };
 
   const deleteHandler = async () => {
@@ -54,11 +53,10 @@ export const ProjectCard = (props: CardProps) => {
   const toggleFavorite = async () => {
     try {
       await toggleProjectFavorite(id);
+      setIsFavorite(!initialFavorite);
     } catch (e) {
       console.error((e as Error).message);
     }
-
-    setIsFavorite(!initialFavorite);
   };
 
   const saveHandler = async (): Promise<void> => {
@@ -274,59 +272,5 @@ export const ProjectCard = (props: CardProps) => {
         </div>
       </div>
     </Card>
-    // <div className={styles.card}>
-    //   <div>
-    //     <div>
-    //       <label>Title:</label>
-    //       <input
-    //         type="text"
-    //         value={initialTitle}
-    //         onChange={(e) => setInitialTitle(e.target.value)}
-    //       />
-    //     </div>
-    //     <div>
-    //       <label>Tags:</label>
-    //       <input
-    //         type="text"
-    //         value={initialTags.join(', ')}
-    //         onChange={(e) => {
-    //           setInitialTags(e.target.value.split(', '));
-    //         }}
-    //         onBlur={(e) => {
-    //           const tags = e.target.value
-    //             .split(',')
-    //             .map((tag) => tag.trim())
-    //             .filter((tag) => tag.length > 0);
-    //           setInitialTags(tags);
-    //         }}
-    //       />
-    //     </div>
-    //     <div>Owner: {username}</div>
-    //     <div>Favorite: {isFavorite ? 'true' : 'false'}</div>
-    //     <div>{formatDate(createdAt)}</div>
-    //   </div>
-    //   <div className="flex justify-between">
-    //     <button
-    //       className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
-    //       onClick={() => {
-    //         setEditMode(false);
-    //       }}
-    //     >
-    //       Cancel
-    //     </button>
-    //     <button
-    //       className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
-    //       onClick={deleteHandler}
-    //     >
-    //       Delete
-    //     </button>
-    //     <button
-    //       className="bg-[#1c1c1c] text-white px-4 py-1 text-sm hover:bg-[#2a2a2a]"
-    //       onClick={saveHandler}
-    //     >
-    //       Save
-    //     </button>
-    //   </div>
-    // </div>
   );
 };
