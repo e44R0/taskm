@@ -17,6 +17,7 @@ export default async function handler(
     const updatedProject = req.body as DTO.Project;
 
     try {
+      //В одну метод userid projectid accessesRole
       const userRole = getUserRole(auth.userId, updatedProject.id);
       if (!isUserMatchRoles(userRole, projectActionsRoles.update)) {
         return res.status(403).json({ message: 'Недостаточно прав' });
@@ -24,7 +25,8 @@ export default async function handler(
 
       updateProject(updatedProject, auth.userId);
       return res.status(200).json(updatedProject);
-    } catch {
+    } catch (error) {
+      console.log(error);
       return res.status(500).json({ message: 'Ошибка при сохранении данных' });
     }
   } else {
