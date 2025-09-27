@@ -35,6 +35,7 @@ export namespace BE {
     taskId: string;
     tags: string[];
     text: string;
+    status: string;
     taskOwner: string;
     createdAt: string;
   }

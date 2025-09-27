@@ -1,5 +1,3 @@
-import { Area, Project } from '@/types/backend';
-
 export namespace FE {
   export type User = {
     userId: string;
@@ -29,6 +27,7 @@ export namespace FE {
     taskId: string;
     tags: string[];
     text: string;
+    status: string;
     taskOwner: string;
     createdAt: string;
   }
