@@ -6,6 +6,7 @@ import { createTask } from '@/api/create-task';
 
 interface AreaProps {
   area: FE.Area;
+  updateTaskInProject: (task: FE.Task) => void;
 }
 
 export const Area = (props: AreaProps) => {
@@ -42,7 +43,7 @@ export const Area = (props: AreaProps) => {
   };
 
   return (
-    <div className="m-1 p-2 orbitron-400">
+    <div className="m-1 p-2 noto-sans-400">
       <div className="flex flex-auto">
         <h2 className="flex-2">{title}</h2>
         <button className="flex-0" onClick={settingsBtnHandler}>
@@ -52,11 +53,12 @@ export const Area = (props: AreaProps) => {
       <ul className="taskList">
         {currentTasks.length > 0 &&
           currentTasks.map((task) => (
-            <li key={task.taskId} className="taskContainer ">
+            <li key={task.taskId} className="p-1">
               <Task
                 areaId={id}
                 task={task}
                 onDelete={() => deleteTaskHandler(task.taskId)}
+                updateTaskInProject={props.updateTaskInProject}
               />
             </li>
           ))}

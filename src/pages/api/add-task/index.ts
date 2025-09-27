@@ -22,6 +22,7 @@ export default async function handler(
       taskId: `${randomUUID()}`,
       tags: [],
       text: '',
+      status: 'not completed',
       taskOwner: 'Bob',
       createdAt: new Date().toISOString().split('T')[0],
     };

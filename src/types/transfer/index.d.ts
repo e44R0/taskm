@@ -33,6 +33,7 @@ export namespace DTO {
     taskId: string;
     tags: string[];
     text: string;
+    status: string;
     taskOwner: string;
     createdAt: string;
   }

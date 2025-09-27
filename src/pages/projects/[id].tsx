@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { FE } from '@/types/frontend';
 import { fetchProject } from '@/api/get-projects';
 import { Navigation } from '@/components/navigation/navigation';
+import { updateTask } from '@/api/update-task';
 
 export default function ProjectID() {
   const router = useRouter();
@@ -37,6 +38,50 @@ export default function ProjectID() {
   // projects/[id]?x=1&y=2
   // foo/bar?x=1&x=2
 
+  const updateTaskInProject = (task: FE.Task) => {
+    // const taskData = {
+    //   taskId: task.taskId,
+    //   text: task.text,
+    //   tags: task.tags,
+    //   status: task.status,
+    //   taskOwner: task.taskOwner,
+    //   createdAt: task.createdAt,
+    // };
+
+    try {
+      // setErrorMessage(null);
+      updateTask(task).then((updatedTask) => {
+        setProject((prevProject) => {
+          if (!prevProject) return prevProject;
+
+          return {
+            ...prevProject,
+            areas: prevProject.areas.map((area) => {
+              const taskIndex = area.tasks.findIndex(
+                (t) => t.taskId === updatedTask.taskId
+              );
+              if (taskIndex === -1) return area;
+
+              const updatedTasks = [...area.tasks];
+              updatedTasks[taskIndex] = {
+                ...area.tasks[taskIndex],
+                ...updatedTask,
+              };
+
+              return {
+                ...area,
+                tasks: updatedTasks,
+              };
+            }),
+          };
+        });
+      });
+    } catch (error) {
+      // setErrorMessage((error as Error).message)
+      console.error((error as Error).message);
+    }
+  };
+
   useEffect(() => {
     if (id) {
       fetchProject(id as string, router)
@@ -69,6 +114,7 @@ export default function ProjectID() {
       <Project
         project={project}
         updateProjectWithArea={updateProjectWithArea}
+        updateTaskInProject={updateTaskInProject}
       />
     </div>
   );

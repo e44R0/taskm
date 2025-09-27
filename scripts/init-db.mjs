@@ -58,6 +58,7 @@ db.exec(`
     CREATE TABLE IF NOT EXISTS tasks (
                                          task_id TEXT PRIMARY KEY,
                                          text TEXT NOT NULL,
+                                         status TEXT NOT NULL DEFAULT 'not completed',
                                          task_owner TEXT NOT NULL,
                                          created_at TEXT NOT NULL,
                                          area_id TEXT NOT NULL,
