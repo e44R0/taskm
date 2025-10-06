@@ -5,6 +5,8 @@ import { FE } from '@/types/frontend';
 import { fetchProject } from '@/api/get-projects';
 import { Navigation } from '@/components/navigation/navigation';
 import { updateTask } from '@/api/update-task';
+import { createTask } from '@/api/create-task';
+import { deleteTask } from '@/api/delete-task';
 
 export default function ProjectID() {
   const router = useRouter();
@@ -39,21 +41,14 @@ export default function ProjectID() {
   // foo/bar?x=1&x=2
 
   const updateTaskInProject = (task: FE.Task) => {
-    // const taskData = {
-    //   taskId: task.taskId,
-    //   text: task.text,
-    //   tags: task.tags,
-    //   status: task.status,
-    //   taskOwner: task.taskOwner,
-    //   createdAt: task.createdAt,
-    // };
-
+    console.log('Task to update:', task);
     try {
       // setErrorMessage(null);
       updateTask(task).then((updatedTask) => {
         setProject((prevProject) => {
           if (!prevProject) return prevProject;
 
+          console.log('updatedTask from BE:', updatedTask);
           return {
             ...prevProject,
             areas: prevProject.areas.map((area) => {
@@ -75,11 +70,50 @@ export default function ProjectID() {
             }),
           };
         });
+        setProject((proj) => {
+          console.log('project:', proj);
+          return proj;
+        });
       });
     } catch (error) {
       // setErrorMessage((error as Error).message)
       console.error((error as Error).message);
     }
+  };
+
+  const addNewTaskInProject = async (area: FE.Area) => {
+    const areaData = { projectId: project!.id, areaId: area.id };
+
+    try {
+      createTask(areaData).then(() => console.log('Новая задача создана'));
+    } catch (error) {
+      console.error('Ошибка при добавлении нового таска:', error);
+    }
+  };
+
+  const deleteTaskInProject = async (taskId: string) => {
+    await deleteTask(taskId);
+
+    setProject((prevProject) => {
+      if (!prevProject) return prevProject;
+
+      return {
+        ...prevProject,
+        areas: prevProject.areas.map((area) => {
+          const taskIndex = area.tasks.findIndex((t) => t.taskId === taskId);
+          if (taskIndex === -1) return area;
+
+          const updatedTasks = area.tasks.filter(
+            (task) => taskId !== task.taskId
+          );
+
+          return {
+            ...area,
+            tasks: updatedTasks,
+          };
+        }),
+      };
+    });
   };
 
   useEffect(() => {
@@ -115,6 +149,8 @@ export default function ProjectID() {
         project={project}
         updateProjectWithArea={updateProjectWithArea}
         updateTaskInProject={updateTaskInProject}
+        addNewTaskInProject={addNewTaskInProject}
+        deleteTaskInProject={deleteTaskInProject}
       />
     </div>
   );

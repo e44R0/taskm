@@ -11,17 +11,23 @@ interface ProjectProps {
     action: 'add' | 'update' | 'delete'
   ) => void;
   updateTaskInProject: (task: FE.Task) => void;
+  addNewTaskInProject: (area: FE.Area) => void;
+  deleteTaskInProject: (taskId: string) => void;
 }
 export const Project = ({
   project,
   updateProjectWithArea,
   updateTaskInProject,
+  addNewTaskInProject,
+  deleteTaskInProject,
 }: ProjectProps) => {
   console.log('project:', project);
   const areasLength = project?.areas?.length + 1 || 1;
   const styles = {
     '--columns-number': areasLength,
   } as CSSProperties;
+
+  console.log('RENDER PROJECT', project);
 
   const addNewAreaHandler = async () => {
     try {
@@ -41,6 +47,8 @@ export const Project = ({
             key={area.id}
             area={area}
             updateTaskInProject={updateTaskInProject}
+            addNewTaskInProject={addNewTaskInProject}
+            deleteTaskInProject={deleteTaskInProject}
           />
         ))}
         <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-11 p-2">
