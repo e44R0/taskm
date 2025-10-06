@@ -27,10 +27,12 @@ interface TaskProps {
 export const Task = (props: TaskProps) => {
   const {
     task: { taskId, tags, text, status, taskOwner, createdAt },
+    task,
     onDelete,
     updateTaskInProject,
   } = props;
 
+  // console.log('task:', task);
   const [completed, setCompleted] = useState(status === 'completed');
   const [editMode, setEditMode] = useState(false);
   const [editTitle, setEditTitle] = useState(text);
@@ -56,9 +58,10 @@ export const Task = (props: TaskProps) => {
     try {
       // setErrorMessage(null);
       updateTask(taskData).then((updatedTask) => {
-        console.log('updatedTask.tags:', updatedTask.tags);
+        // console.log('updatedTask.tags:', updatedTask.tags);
         updateTaskInProject(updatedTask);
         // setEditTitle(updatedTask.text);
+        // console.log('updatedTask:', updatedTask);
         setEditMode(!editMode);
       });
     } catch (error) {
@@ -76,7 +79,6 @@ export const Task = (props: TaskProps) => {
 
   const handleDeleteClick = async () => {
     try {
-      await deleteTask(taskId);
       onDelete();
     } catch (error) {
       console.error((error as Error).message);
@@ -123,11 +125,11 @@ export const Task = (props: TaskProps) => {
       .slice(0, 2);
   };
 
-  useEffect(() => {
-    setEditTitle(text);
-    setEditTags(tags);
-    setCompleted(status === 'completed');
-  }, [text, tags, status]);
+  // useEffect(() => {
+  //   setEditTitle(text);
+  //   setEditTags(tags);
+  //   setCompleted(status === 'completed');
+  // }, [text, tags, status]);
 
   return (
     <Card className="w-full max-w-sm hover:shadow-lg transition-shadow duration-200 group bg-zinc-900/50 border-zinc-800 backdrop-blur-sm gap-2 p-4">
@@ -164,7 +166,7 @@ export const Task = (props: TaskProps) => {
                   completed ? 'text-zinc-400 line-through' : 'text-white'
                 }`}
               >
-                {editTitle}
+                {text}
               </h4>
             )}
           </div>
