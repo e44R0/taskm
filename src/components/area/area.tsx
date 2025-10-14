@@ -2,7 +2,6 @@ import { FE } from '@/types/frontend';
 import { Task } from '../task/task';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { createTask } from '@/api/create-task';
 
 interface AreaProps {
   area: FE.Area;
@@ -19,7 +18,7 @@ export const Area = (props: AreaProps) => {
     addNewTaskInProject,
     deleteTaskInProject,
   } = props;
-  const router = useRouter();
+  // const router = useRouter();
   // const [currentTasks, setCurrentTasks] = React.useState<FE.Task[]>(tasks);
   // const projectId = router.query.id as string;
   console.log('RENDER AREA:', title, tasks);

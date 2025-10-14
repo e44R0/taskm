@@ -85,7 +85,8 @@ export default function ProjectID() {
     const areaData = { projectId: project!.id, areaId: area.id };
 
     try {
-      createTask(areaData).then(() => console.log('Новая задача создана'));
+      await createTask(areaData);
+      console.log('Новая задача создана');
     } catch (error) {
       console.error('Ошибка при добавлении нового таска:', error);
     }

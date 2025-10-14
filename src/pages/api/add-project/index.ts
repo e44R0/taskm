@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
-import { authCheck } from '@/utils/utils';
+import { parseSession } from '@/utils/utils';
 import { Project } from '@/types/project';
 import { addNewProject } from '@/db/project-service';
 
@@ -9,23 +9,18 @@ export default async function handler(
   res: NextApiResponse<Project | { message: string }>
 ) {
   if (req.method === 'POST') {
-    const auth = authCheck(req, res);
+    const session = parseSession(req.headers.cookie ?? '');
 
-    // if (typeof projectId !== 'string') {
-    //   return res
-    //     .status(400)
-    //     .json({ message: 'Некорректный идентификатор проекта' });
-    // }
-    if (auth !== null) {
+    if (session !== null) {
       const newProject = {
         id: `${randomUUID()}`,
         title: req.body.title,
         tags: req.body.tags ?? [],
-        userId: auth.userId,
+        userId: session.userId,
         isFavorite: false,
         createdAt: new Date().toString(),
         areas: [],
-        username: auth.username,
+        username: session.username,
       };
 
       try {
