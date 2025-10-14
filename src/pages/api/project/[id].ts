@@ -1,17 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Project } from '@/types/project';
 import { getProjectDataByProjectId } from '@/db/project-service';
-import { authCheck } from '@/utils/utils';
+import cookie from "cookie";
+import {getSession} from "@/db/auth-service";
+// import { authCheck } from '@/utils/utils';
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<Project | { message: string }>
 ) {
-  const result = authCheck(req, res);
-  if (result === null) {
-    return;
-  }
+  // const result = authCheck(req, res);
+  // if (result === null) {
+  //   return;
+  // }
   // result.userId;
+  const parsedCookie = cookie.parse(req.headers.cookie ?? '');
+  const session = getSession(parsedCookie!.session!);
 
   const { id } = req.query;
   console.log('Запрошен проект: ', id);
@@ -21,7 +25,7 @@ export default function handler(
       .status(400)
       .json({ message: 'Некорректный идентификатор проекта' });
   }
-  const project = getProjectDataByProjectId(id, result.userId);
+  const project = getProjectDataByProjectId(id, session.userId);
   console.log('project', project);
 
   if (!project) {

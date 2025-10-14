@@ -1,8 +1,8 @@
 import { NextResponse, NextRequest } from 'next/server';
-import { DTO } from './types/transfer';
+// import { DTO } from './types/transfer';
 import { deleteSession, getSession } from '@/db/auth-service';
-import cookie from 'cookie';
-import { NextApiRequest, NextApiResponse } from 'next';
+// import cookie from 'cookie';
+// import { NextApiRequest, NextApiResponse } from 'next';
 
 const sessionLiveTime = 24 * 60 * 60 * 1000;
 
@@ -27,17 +27,14 @@ export const authCheck = (req: NextRequest, res: NextResponse) => {
       }
       return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
     }
+    console.log('authCheck success');
+    return NextResponse.next()
 
-    return {
-      userId: session.userId,
-      username: session.username,
-      email: session.email,
-    };
   } catch (error) {
     console.error('Auth check error:', error);
     return NextResponse.json(
       {
-        message: 'Internal server error',
+        message: 'Internal server error 2',
         error: 'An unexpected error occurred',
       },
       { status: 500 }
@@ -45,14 +42,19 @@ export const authCheck = (req: NextRequest, res: NextResponse) => {
   }
 };
 
+const ignoreRoutes = ['/api/login','/api/check-auth']
+
 export function middleware(request: NextRequest, response: NextResponse) {
-  if (request.nextUrl.pathname !== '/api/check-auth') {
+  console.log('middleware: ', request.nextUrl.pathname);
+  if (!ignoreRoutes.includes(request.nextUrl.pathname)) {
     console.log('call api:', request.url);
     const session = request.cookies.get('session');
     console.log('cookie:', session);
     return authCheck(request, response);
   }
 
+
+  return NextResponse.next()
   // return NextResponse.redirect(new URL('/login', request.url))
 }
 
@@ -60,3 +62,6 @@ export const config = {
   runtime: 'nodejs',
   matcher: '/api/:path*',
 };
+
+
+//дабвить хедер с  ID пользователя и его парсить при выполнении запроса
