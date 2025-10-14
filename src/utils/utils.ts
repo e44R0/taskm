@@ -1,6 +1,7 @@
 import { deleteSession, getSession } from '@/db/auth-service';
-import cookie from 'cookie';
+import cookieUtils from 'cookie';
 import { NextApiRequest, NextApiResponse } from 'next';
+// import { Session } from 'node:inspector';
 
 const sessionLiveTime = 24 * 60 * 60 * 1000;
 
@@ -9,7 +10,7 @@ const isSessionExpired = (date: Date) => {
 };
 
 export const authCheck = (req: NextApiRequest, res: NextApiResponse) => {
-  const parsedCookie = cookie.parse(req.headers.cookie ?? '');
+  const parsedCookie = cookieUtils.parse(req.headers.cookie ?? '');
 
   if (!parsedCookie || !parsedCookie?.session) {
     res.status(401).send({ message: 'Not authorized' });
@@ -31,4 +32,12 @@ export const authCheck = (req: NextApiRequest, res: NextApiResponse) => {
     username: session.username,
     email: session.email,
   };
+};
+
+export const parseSession = (cookie: string) => {
+  const parsedCookie = cookieUtils.parse(cookie ?? '');
+  if (parsedCookie.session === undefined) {
+    throw new Error('Could not parse session');
+  }
+  return getSession(parsedCookie.session);
 };

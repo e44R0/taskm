@@ -1,8 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server';
-// import { DTO } from './types/transfer';
 import { deleteSession, getSession } from '@/db/auth-service';
-// import cookie from 'cookie';
-// import { NextApiRequest, NextApiResponse } from 'next';
 
 const sessionLiveTime = 24 * 60 * 60 * 1000;
 
@@ -28,8 +25,7 @@ export const authCheck = (req: NextRequest, res: NextResponse) => {
       return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
     }
     console.log('authCheck success');
-    return NextResponse.next()
-
+    return NextResponse.next();
   } catch (error) {
     console.error('Auth check error:', error);
     return NextResponse.json(
@@ -42,7 +38,8 @@ export const authCheck = (req: NextRequest, res: NextResponse) => {
   }
 };
 
-const ignoreRoutes = ['/api/login','/api/check-auth']
+const ignoreRoutes = ['/api/login', '/api/check-auth'];
+//
 
 export function middleware(request: NextRequest, response: NextResponse) {
   console.log('middleware: ', request.nextUrl.pathname);
@@ -53,8 +50,7 @@ export function middleware(request: NextRequest, response: NextResponse) {
     return authCheck(request, response);
   }
 
-
-  return NextResponse.next()
+  return NextResponse.next();
   // return NextResponse.redirect(new URL('/login', request.url))
 }
 
@@ -62,6 +58,5 @@ export const config = {
   runtime: 'nodejs',
   matcher: '/api/:path*',
 };
-
 
 //дабвить хедер с  ID пользователя и его парсить при выполнении запроса
