@@ -7,7 +7,7 @@ const isSessionExpired = (date: Date) => {
   return Date.now() - Number(date) > sessionLiveTime;
 };
 
-export const authCheck = (req: NextRequest, res: NextResponse) => {
+export const authCheck = (req: NextRequest) => {
   try {
     const { value } = req.cookies.get('session') ?? {};
     const parsedCookie = value; //cookie.parse(value);
@@ -24,13 +24,20 @@ export const authCheck = (req: NextRequest, res: NextResponse) => {
       }
       return NextResponse.json({ message: 'Not authorized' }, { status: 401 });
     }
-    console.log('authCheck success');
-    return NextResponse.next();
+
+    const requestHeaders = new Headers(req.headers);
+    requestHeaders.set('x-session', JSON.stringify(session));
+
+    return NextResponse.next({
+      request: {
+        headers: requestHeaders,
+      },
+    });
   } catch (error) {
     console.error('Auth check error:', error);
     return NextResponse.json(
       {
-        message: 'Internal server error 2',
+        message: 'Internal server error',
         error: 'An unexpected error occurred',
       },
       { status: 500 }
@@ -39,24 +46,16 @@ export const authCheck = (req: NextRequest, res: NextResponse) => {
 };
 
 const ignoreRoutes = ['/api/login', '/api/check-auth'];
-//
 
-export function middleware(request: NextRequest, response: NextResponse) {
-  console.log('middleware: ', request.nextUrl.pathname);
+export function middleware(request: NextRequest) {
   if (!ignoreRoutes.includes(request.nextUrl.pathname)) {
-    console.log('call api:', request.url);
-    const session = request.cookies.get('session');
-    console.log('cookie:', session);
-    return authCheck(request, response);
+    return authCheck(request);
   }
 
   return NextResponse.next();
-  // return NextResponse.redirect(new URL('/login', request.url))
 }
 
 export const config = {
   runtime: 'nodejs',
   matcher: '/api/:path*',
 };
-
-//дабвить хедер с  ID пользователя и его парсить при выполнении запроса

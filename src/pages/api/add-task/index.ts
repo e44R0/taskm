@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { DTO } from '@/types/transfer';
 import { randomUUID } from 'crypto';
 import { addNewTask } from '@/db/task-service';
-import { parseSession } from '@/utils/utils';
 import { getUserRole } from '@/db/user-service';
 
 export default async function handler(
@@ -10,10 +9,15 @@ export default async function handler(
   res: NextApiResponse<DTO.Task | { message: string }>
 ) {
   if (req.method === 'POST') {
-    console.log('Запрошен проект дял добавления задачи: ', req.body);
+    const sessionHeader = req.headers['x-session'];
+
+    if (Array.isArray(sessionHeader) || sessionHeader === undefined) {
+      throw new Error('error: sessionHeader must be an array');
+    }
+
     const projectId = req.body.projectId;
     const areaId = req.body.areaId;
-    const session = parseSession(req.headers.cookie ?? '');
+    const session = JSON.parse(sessionHeader);
 
     if (typeof projectId !== 'string') {
       return res
