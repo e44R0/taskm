@@ -7,6 +7,7 @@ import { Navigation } from '@/components/navigation/navigation';
 import { updateTask } from '@/api/update-task';
 import { createTask } from '@/api/create-task';
 import { deleteTask } from '@/api/delete-task';
+import { ErrorBoundary } from 'react-error-boundary';
 
 export default function ProjectID() {
   const router = useRouter();
@@ -86,9 +87,14 @@ export default function ProjectID() {
 
     try {
       await createTask(areaData);
-      console.log('Новая задача создана');
     } catch (error) {
-      console.error('Ошибка при добавлении нового таска:', error);
+      if (error instanceof Error && error.message.includes('403')) {
+        // Показываем пользователю сообщение
+        setError('У вас нет прав для этого действия');
+        // console.error('Ошибка при добавлении нового таска:', error);
+      } else {
+        setError('Произошла ошибка');
+      }
     }
   };
 
@@ -146,13 +152,16 @@ export default function ProjectID() {
   return (
     <div className="flex">
       <Navigation />
-      <Project
-        project={project}
-        updateProjectWithArea={updateProjectWithArea}
-        updateTaskInProject={updateTaskInProject}
-        addNewTaskInProject={addNewTaskInProject}
-        deleteTaskInProject={deleteTaskInProject}
-      />
+      <ErrorBoundary fallback={<div>Something went wrong</div>}>
+        {/*{error && <Tost>}*/}
+        <Project
+          project={project}
+          updateProjectWithArea={updateProjectWithArea}
+          updateTaskInProject={updateTaskInProject}
+          addNewTaskInProject={addNewTaskInProject}
+          deleteTaskInProject={deleteTaskInProject}
+        />
+      </ErrorBoundary>
     </div>
   );
 }
