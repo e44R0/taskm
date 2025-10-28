@@ -13,6 +13,7 @@ export namespace FE {
     isFavorite: boolean;
     createdAt: string;
     username: string;
+    userRole: Role;
   }
 
   export interface Area {
@@ -31,4 +32,6 @@ export namespace FE {
     taskOwner: string;
     createdAt: string;
   }
+
+  type Role = 'OWNER' | 'MODERATOR' | 'MEMBER' | 'VIEWER';
 }

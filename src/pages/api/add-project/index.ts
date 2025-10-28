@@ -1,15 +1,19 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
-import { parseSession } from '@/utils/utils';
-import { Project } from '@/types/project';
+import { BE } from '@/types/backend';
 import { addNewProject } from '@/db/project-service';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Project | { message: string }>
+  res: NextApiResponse<BE.Project | { message: string }>
 ) {
   if (req.method === 'POST') {
-    const session = parseSession(req.headers.cookie ?? '');
+    const sessionHeader = req.headers['x-session'];
+    if (Array.isArray(sessionHeader) || sessionHeader === undefined) {
+      throw new Error('error: sessionHeader must be an array');
+    }
+
+    const session = JSON.parse(sessionHeader);
 
     if (session !== null) {
       const newProject = {
@@ -21,6 +25,7 @@ export default async function handler(
         createdAt: new Date().toString(),
         areas: [],
         username: session.username,
+        userRole: session.userRole,
       };
 
       try {
