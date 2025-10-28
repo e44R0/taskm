@@ -1,14 +1,14 @@
 import { ProjectCard } from '@/components/project-card/project-card';
 import style from './project-list.module.css';
 import { useEffect, useState } from 'react';
-import { Project } from '@/types/project';
 import { fetcher } from '@/api/fetcher';
 import { useRouter } from 'next/router';
 // import { createProject } from '@/api/create-project';
 import { NewCard } from '../new-card/new-card';
+import { FE } from '@/types/frontend';
 
 export const ProjectList = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
+  const [projects, setProjects] = useState<FE.Project[]>([]);
   const [isCreationMode, setIsCreationMode] = useState(false);
   const router = useRouter();
 

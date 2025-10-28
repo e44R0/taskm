@@ -22,6 +22,7 @@ export const Project = ({
   deleteTaskInProject,
 }: ProjectProps) => {
   console.log('project:', project);
+  const userRole = project.userRole;
   const areasLength = project?.areas?.length + 1 || 1;
   const styles = {
     '--columns-number': areasLength,
@@ -46,14 +47,19 @@ export const Project = ({
           <Area
             key={area.id}
             area={area}
+            userRole={userRole}
             updateTaskInProject={updateTaskInProject}
             addNewTaskInProject={addNewTaskInProject}
             deleteTaskInProject={deleteTaskInProject}
           />
         ))}
-        <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-11 p-2">
-          <button onClick={addNewAreaHandler}>+</button>
-        </div>
+        {(userRole === 'MODERATOR' ||
+          userRole === 'OWNER' ||
+          userRole === 'MEMBER') && (
+          <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-11 p-2">
+            <button onClick={addNewAreaHandler}>+</button>
+          </div>
+        )}
       </div>
     </>
   );

@@ -1,4 +1,4 @@
-import { Project } from '@/types/project';
+import { FE } from '@/types/frontend';
 // import styles from './new-card.module.css';
 import { useState } from 'react';
 import { createProject } from '@/api/create-project';
@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 type NewCardProps = {
-  onProjectCreated: (project: Project) => void;
+  onProjectCreated: (project: FE.Project) => void;
   onCansel: () => void;
 };
 

@@ -90,6 +90,8 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
     `);
   const records = stmt.all(projectId);
 
+  const userRole = getUserRole(userId, projectId);
+
   const areasMap = new Map<string, BE.Area>();
 
   records.forEach((record: any) => {
@@ -123,6 +125,7 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
   });
 
   project.areas = [...areasMap.values()] as BE.Area[];
+  project.userRole = userRole!;
 
   return project;
 }

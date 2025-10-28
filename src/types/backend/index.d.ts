@@ -23,6 +23,7 @@ export namespace BE {
     isFavorite: boolean;
     createdAt: string;
     username: string;
+    userRole: Role;
   }
 
   export interface Area {
