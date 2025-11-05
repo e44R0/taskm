@@ -1,5 +1,3 @@
-import { Area, Project } from '@/types/backend';
-
 export namespace FE {
   export type User = {
     userId: string;
@@ -15,6 +13,7 @@ export namespace FE {
     isFavorite: boolean;
     createdAt: string;
     username: string;
+    userRole: Role;
   }
 
   export interface Area {
@@ -29,7 +28,10 @@ export namespace FE {
     taskId: string;
     tags: string[];
     text: string;
+    status: string;
     taskOwner: string;
     createdAt: string;
   }
+
+  type Role = 'OWNER' | 'MODERATOR' | 'MEMBER' | 'VIEWER';
 }

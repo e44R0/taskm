@@ -1,4 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Bytesized&family=Orbitron:wght@400..900&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400..900&display=swap');
+
 
 .orbitron-400 {
   font-family: "Orbitron", sans-serif;
@@ -20,3 +23,16 @@
   font-style: normal;
   font-variation-settings: "MORF" 35, "SHLN" 50;
 }
+
+.noto-sans-400 {
+    font-family: "Noto Sans", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.montserrat-400 {
+                 font-family: "Montserrat", sans-serif;
+                 font-optical-sizing: auto;
+                 font-weight: 400;
+                 font-style: normal;
+             }

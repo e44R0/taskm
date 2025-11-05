@@ -1,4 +1,4 @@
-import { Project } from '@/types/project';
+import { FE } from '@/types/frontend';
 import styles from './card.module.css';
 import { formatDate } from '../utils';
 import { deleteProject } from '@/api/delete-project';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { toggleProjectFavorite } from '@/api/toggle-project-favorite';
 
 interface CardProps {
-  project: Project;
+  project: FE.Project;
   onDelete: () => void;
 }
 

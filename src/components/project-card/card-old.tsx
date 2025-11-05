@@ -1,4 +1,4 @@
-import { Project } from '@/types/project';
+import { FE } from '@/types/frontend';
 import styles from './card.module.css';
 import Link from 'next/link';
 import { formatDate } from '../utils';
@@ -7,7 +7,7 @@ import { useState } from 'react';
 import { updateProject } from '@/api/update-project';
 
 interface CardProps {
-  project: Project;
+  project: FE.Project;
   onDelete: () => void;
 }
 

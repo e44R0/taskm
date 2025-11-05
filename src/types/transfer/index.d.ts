@@ -19,6 +19,7 @@ export namespace DTO {
     isFavorite: boolean;
     createdAt: string;
     username: string;
+    userRole: Role;
   }
 
   export interface Area {
@@ -33,6 +34,7 @@ export namespace DTO {
     taskId: string;
     tags: string[];
     text: string;
+    status: string;
     taskOwner: string;
     createdAt: string;
   }
@@ -41,4 +43,6 @@ export namespace DTO {
     data?: Task;
     message?: string;
   };
+
+  type Role = 'OWNER' | 'MODERATOR' | 'MEMBER' | 'VIEWER';
 }

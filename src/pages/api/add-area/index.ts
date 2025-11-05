@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
 import { addNewArea } from '@/db/task-service';
+import { getUserRole } from '@/db/user-service';
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,6 +9,11 @@ export default async function handler(
 ) {
   if (req.method === 'POST') {
     const projectId = req.body.projectId;
+    const sessionHeader = req.headers['x-session'];
+
+    if (Array.isArray(sessionHeader) || sessionHeader === undefined) {
+      throw new Error('error: sessionHeader must be an array');
+    }
 
     if (typeof projectId !== 'string') {
       return res
@@ -22,6 +28,17 @@ export default async function handler(
     };
 
     try {
+      const session = JSON.parse(sessionHeader);
+      const userRole = getUserRole(session.userId, projectId);
+
+      console.log('userRole ->> ', userRole);
+
+      if (!userRole || userRole === 'VIEWER' || userRole === 'MEMBER') {
+        return res
+          .status(403)
+          .json({ message: 'Недостаточно прав для выполнения действия' });
+      }
+
       addNewArea(projectId, newArea);
       return res.status(200).json(newArea);
     } catch {

@@ -23,6 +23,7 @@ export namespace BE {
     isFavorite: boolean;
     createdAt: string;
     username: string;
+    userRole: Role;
   }
 
   export interface Area {
@@ -35,6 +36,7 @@ export namespace BE {
     taskId: string;
     tags: string[];
     text: string;
+    status: string;
     taskOwner: string;
     createdAt: string;
   }

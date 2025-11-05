@@ -90,6 +90,8 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
     `);
   const records = stmt.all(projectId);
 
+  const userRole = getUserRole(userId, projectId);
+
   const areasMap = new Map<string, BE.Area>();
 
   records.forEach((record: any) => {
@@ -97,6 +99,7 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
       areasMap.get(record.area_id)?.tasks.push({
         taskId: record.task_id,
         text: record.text,
+        status: record.status,
         tags: record.tags?.split(', ') ?? [],
         taskOwner: record.task_owner,
         createdAt: record.created_at,
@@ -110,6 +113,7 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
               {
                 taskId: record.task_id,
                 text: record.text,
+                status: record.status,
                 tags: record.tags?.split(', ') ?? [],
                 taskOwner: record.task_owner,
                 createdAt: record.created_at,
@@ -121,6 +125,7 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
   });
 
   project.areas = [...areasMap.values()] as BE.Area[];
+  project.userRole = userRole!;
 
   return project;
 }

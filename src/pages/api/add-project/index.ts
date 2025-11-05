@@ -1,31 +1,31 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { randomUUID } from 'crypto';
-import { authCheck } from '@/utils/utils';
-import { Project } from '@/types/project';
+import { BE } from '@/types/backend';
 import { addNewProject } from '@/db/project-service';
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Project | { message: string }>
+  res: NextApiResponse<BE.Project | { message: string }>
 ) {
   if (req.method === 'POST') {
-    const auth = authCheck(req, res);
+    const sessionHeader = req.headers['x-session'];
+    if (Array.isArray(sessionHeader) || sessionHeader === undefined) {
+      throw new Error('error: sessionHeader must be an array');
+    }
 
-    // if (typeof projectId !== 'string') {
-    //   return res
-    //     .status(400)
-    //     .json({ message: 'Некорректный идентификатор проекта' });
-    // }
-    if (auth !== null) {
+    const session = JSON.parse(sessionHeader);
+
+    if (session !== null) {
       const newProject = {
         id: `${randomUUID()}`,
         title: req.body.title,
         tags: req.body.tags ?? [],
-        userId: auth.userId,
+        userId: session.userId,
         isFavorite: false,
         createdAt: new Date().toString(),
         areas: [],
-        username: auth.username,
+        username: session.username,
+        userRole: session.userRole,
       };
 
       try {

@@ -1,5 +1,4 @@
 import classes from './projcet.module.css';
-
 import { FE } from '@/types/frontend';
 import { Area } from '../area/area';
 import { CSSProperties } from 'react';
@@ -11,19 +10,29 @@ interface ProjectProps {
     area: FE.Area,
     action: 'add' | 'update' | 'delete'
   ) => void;
+  updateTaskInProject: (task: FE.Task) => void;
+  addNewTaskInProject: (area: FE.Area) => void;
+  deleteTaskInProject: (taskId: string) => void;
 }
-export const Project = ({ project, updateProjectWithArea }: ProjectProps) => {
+export const Project = ({
+  project,
+  updateProjectWithArea,
+  updateTaskInProject,
+  addNewTaskInProject,
+  deleteTaskInProject,
+}: ProjectProps) => {
   console.log('project:', project);
+  const userRole = project.userRole;
   const areasLength = project?.areas?.length + 1 || 1;
   const styles = {
     '--columns-number': areasLength,
   } as CSSProperties;
 
+  console.log('RENDER PROJECT', project);
+
   const addNewAreaHandler = async () => {
     try {
       createArea({ projectId: project.id }).then((newArea) => {
-        console.log('Новая Area', newArea);
-        console.log('Новая создана');
         updateProjectWithArea(newArea, 'add');
       });
     } catch (error) {
@@ -34,10 +43,23 @@ export const Project = ({ project, updateProjectWithArea }: ProjectProps) => {
   return (
     <>
       <div className={classes.projectLayout} style={styles}>
-        {project?.areas?.map((area) => <Area key={area.id} area={area} />)}
-        <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-11 p-2">
-          <button onClick={addNewAreaHandler}>+</button>
-        </div>
+        {project?.areas?.map((area) => (
+          <Area
+            key={area.id}
+            area={area}
+            userRole={userRole}
+            updateTaskInProject={updateTaskInProject}
+            addNewTaskInProject={addNewTaskInProject}
+            deleteTaskInProject={deleteTaskInProject}
+          />
+        ))}
+        {(userRole === 'MODERATOR' ||
+          userRole === 'OWNER' ||
+          userRole === 'MEMBER') && (
+          <div className="text-center hover:bg-[#1c1c1c] max-h-10 mt-11 p-2">
+            <button onClick={addNewAreaHandler}>+</button>
+          </div>
+        )}
       </div>
     </>
   );
