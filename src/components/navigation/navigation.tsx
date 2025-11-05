@@ -4,7 +4,7 @@ import { logout } from '@/api/logout';
 import { useContext } from 'react';
 import { AuthContext } from '@/components/auth-context/auth-context';
 import router from 'next/router';
-import { useState } from 'react';
+// import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 // import { Separator } from '@/components/ui/separator';
@@ -15,14 +15,11 @@ import {
   Settings,
   User,
 } from 'lucide-react';
+import { useSidebarState } from './hooks/use-sidebar-state';
 
 export const Navigation = () => {
   const auth = useContext(AuthContext);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const toggleSidebar = () => {
-    setIsCollapsed(!isCollapsed);
-  };
+  const [isCollapsed, toggleSidebar] = useSidebarState();
 
   const handleLogout = async () => {
     logout()
