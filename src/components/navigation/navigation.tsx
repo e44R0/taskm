@@ -4,7 +4,6 @@ import { logout } from '@/api/logout';
 import { useContext } from 'react';
 import { AuthContext } from '@/components/auth-context/auth-context';
 import router from 'next/router';
-// import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 // import { Separator } from '@/components/ui/separator';

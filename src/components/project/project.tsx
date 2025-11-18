@@ -21,14 +21,11 @@ export const Project = ({
   addNewTaskInProject,
   deleteTaskInProject,
 }: ProjectProps) => {
-  console.log('project:', project);
   const userRole = project.userRole;
   const areasLength = project?.areas?.length + 1 || 1;
   const styles = {
     '--columns-number': areasLength,
   } as CSSProperties;
-
-  console.log('RENDER PROJECT', project);
 
   const addNewAreaHandler = async () => {
     try {
