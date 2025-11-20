@@ -1,7 +1,6 @@
 import { FE } from '@/types/frontend';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { updateTask } from '@/api/update-task';
-import { deleteTask } from '@/api/delete-task';
 import { Card, CardContent, CardHeader } from '../ui/card';
 import {
   Calendar,
@@ -27,7 +26,6 @@ interface TaskProps {
 export const Task = (props: TaskProps) => {
   const {
     task: { taskId, tags, text, status, taskOwner, createdAt },
-    task,
     onDelete,
     updateTaskInProject,
   } = props;
