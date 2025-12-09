@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "init-bd": "node scripts/init-db.mjs",
-    "setup-mocks": "node scripts/setup-mocks2.mjs"
+    "setup-mocks": "node scripts/setup-mocks2.mjs",
+    "test": "vitest"
   },
   "dependencies": {
     "@ngneat/falso": "^8.0.2",
@@ -37,9 +38,11 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.2.1",
+    "node-mocks-http": "^1.17.2",
     "prettier": "^3.5.3",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.5",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.0.15"
   }
 }
