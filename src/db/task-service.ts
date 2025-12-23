@@ -59,7 +59,6 @@ function deleteTagsInTask(userId: string, task: DTO.Task) {
       console.error(error);
     }
   });
-  console.log('tagsToDel -> ', tagsToDel);
 }
 
 function addNewTagsInTask(userId: string, task: DTO.Task) {
@@ -69,8 +68,6 @@ function addNewTagsInTask(userId: string, task: DTO.Task) {
 
   const userTags = selectTagsStmt.all(userId);
   const tagNamesArray = userTags.map((row) => row.tag_name);
-
-  console.log('tagNamesArray -> ', tagNamesArray);
 
   const taskTags = task.tags;
   const newTags = taskTags.filter((tag) => !tagNamesArray.includes(tag));
@@ -83,7 +80,6 @@ function addNewTagsInTask(userId: string, task: DTO.Task) {
                values (?,?,?)      
        `);
       const runResult = stmt.run(tagId, userId, tag);
-      console.log('runResult ->>> ', runResult);
 
       if (runResult.changes !== 0) {
         const stmt2 = db.prepare(`
