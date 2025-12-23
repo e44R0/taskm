@@ -74,19 +74,20 @@ export function getProjectDataByProjectId(projectId: string, userId: string) {
     return null;
   }
   const stmt = db.prepare(`
-      SELECT
-          a.id as area_id,
-          a.title as area_title,
-          t.task_id,
-          t.text,
-          t.task_owner, 
-          t.created_at,
-          GROUP_CONCAT(tt.tag_id, ', ') as tags
-      FROM areas a
-               LEFT JOIN tasks t ON a.id = t.area_id
-               LEFT JOIN task_tags tt ON t.task_id = tt.task_id
-      WHERE a.project_id = ?
-      GROUP BY a.id, a.title, t.task_id, t.text, t.task_owner, t.created_at;
+    SELECT
+      a.id as area_id,
+      a.title as area_title,
+      t.task_id,
+      t.text,
+      t.task_owner,
+      t.created_at,
+      GROUP_CONCAT(tags.tag_name, ', ') as tags
+    FROM areas a
+           LEFT JOIN tasks t ON a.id = t.area_id
+           LEFT JOIN task_tags tt ON t.task_id = tt.task_id
+           LEFT JOIN tags ON tt.tag_id = tags.id  -- Добавляем JOIN к таблице tags
+    WHERE a.project_id = ?
+    GROUP BY a.id, a.title, t.task_id, t.text, t.task_owner, t.created_at;
     `);
   const records = stmt.all(projectId);
 
@@ -151,11 +152,7 @@ export function addNewProject(data: DTO.Project) {
       const newTags = data.tags.filter((tag) => {
         const userTag = userTags.find((t) => t.tag_name === tag);
 
-        if (userTag) {
-          return false;
-        }
-
-        return true;
+        return !userTag;
       });
 
       console.log('newTags:', newTags);
