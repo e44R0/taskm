@@ -1,7 +1,7 @@
 import db from '../../scripts/init-db.mjs';
 import { BE } from '@/types/backend';
 import { DTO } from '@/types/transfer';
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 export function getAreasByProjectId(projectId: string) {
   const stmt = db.prepare(`
@@ -29,7 +29,7 @@ export function addNewTask(
 ) {
   const stmt =
     db.prepare(`INSERT INTO tasks (task_id, text, task_owner, created_at, area_id)
-    VALUES (?, ?, ?, ?, ?)
+                        VALUES (?, ?, ?, ?, ?)
   `);
   stmt.run(task.taskId, task.text, task.taskOwner, task.createdAt, area_id);
 }
@@ -52,7 +52,8 @@ function deleteTagsInTask(userId: string, task: DTO.Task) {
   tagsToDel.forEach((tag) => {
     try {
       const stmt = db.prepare(
-        `DELETE FROM task_tags where task_id = ? AND tag_id = ?`
+        `DELETE FROM task_tags
+                WHERE task_id = ? AND tag_id = ?`
       );
       stmt.run(task.taskId, tag.tag_id);
     } catch (error) {
@@ -62,34 +63,51 @@ function deleteTagsInTask(userId: string, task: DTO.Task) {
 }
 
 function addNewTagsInTask(userId: string, task: DTO.Task) {
-  const selectTagsStmt = db.prepare<[string], { tag_name: string }>(
-    `SELECT tag_name FROM tags WHERE user_id = ?`
+  const taskTags = task.tags;
+
+  const selectTagsStmt = db.prepare<
+    [string, string],
+    { tag_name: string; tag_id: string }
+  >(
+    `SELECT t.tag_name, tt.tag_id FROM tags t
+            JOIN task_tags tt ON tt.tag_id = t.id
+            WHERE t.user_id = ? AND tt.task_id = ?`
   );
 
-  const userTags = selectTagsStmt.all(userId);
-  const tagNamesArray = userTags.map((row) => row.tag_name);
+  const existingTaskTags = selectTagsStmt.all(userId, task.taskId);
+  const existingTagNames = existingTaskTags.map((row) => row.tag_name);
 
-  const taskTags = task.tags;
-  const newTags = taskTags.filter((tag) => !tagNamesArray.includes(tag));
+  const newTags = taskTags.filter((tag) => !existingTagNames.includes(tag));
+
+  console.log('newTags -> ', newTags);
 
   newTags.forEach((tag) => {
     try {
-      const tagId = uuidv4();
-      const stmt = db.prepare(`
-        INSERT OR IGNORE INTO tags (id, user_id ,tag_name)
-               values (?,?,?)      
-       `);
-      const runResult = stmt.run(tagId, userId, tag);
+      const findTagStmt = db.prepare<[string, string], { id: string }>(
+        `SELECT id FROM tags WHERE user_id = ? AND tag_name = ?`
+      );
+      const existingTag = findTagStmt.get(userId, tag);
 
-      if (runResult.changes !== 0) {
-        const stmt2 = db.prepare(`
-            INSERT OR IGNORE INTO task_tags (task_id, tag_id)
-            values (?,?)
+      let tagId: string;
+
+      if (existingTag) {
+        tagId = existingTag.id;
+      } else {
+        tagId = uuid();
+        const createTagStmt = db.prepare(`
+            INSERT INTO tags (id, user_id, tag_name)
+            VALUES (?, ?, ?)
         `);
-        stmt2.run(task.taskId, tagId);
+        createTagStmt.run(tagId, userId, tag);
       }
+
+      const linkStmt = db.prepare(`
+        INSERT OR IGNORE INTO task_tags (task_id, tag_id)
+        VALUES (?, ?)
+      `);
+      linkStmt.run(task.taskId, tagId);
     } catch (error) {
-      console.error(error);
+      console.error('Ошибка при добавлении связи "тег - таск":', error);
     }
   });
 }
@@ -104,9 +122,8 @@ export function updateTask(task: DTO.Task, userId: string) {
   `);
   stmt.run(task.text, task.taskOwner, task.taskId);
 
-  addNewTagsInTask(userId, task);
-
   deleteTagsInTask(userId, task);
+  addNewTagsInTask(userId, task);
 }
 
 export function deleteTask(taskId: string) {
@@ -119,6 +136,6 @@ export function addNewArea(
   area: { id: string; title: string }
 ) {
   const stmt = db.prepare(`INSERT INTO areas (title, project_id, id)
-                           VALUES (?, ?, ?) `);
+                                                                VALUES (?, ?, ?) `);
   stmt.run(area.title, projectId, area.id);
 }
