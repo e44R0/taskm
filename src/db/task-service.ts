@@ -79,8 +79,6 @@ function addNewTagsInTask(userId: string, task: DTO.Task) {
 
   const newTags = taskTags.filter((tag) => !existingTagNames.includes(tag));
 
-  console.log('newTags -> ', newTags);
-
   newTags.forEach((tag) => {
     try {
       const findTagStmt = db.prepare<[string, string], { id: string }>(
